@@ -4,7 +4,7 @@
 (define-artanis-controller assayrun) ; DO NOT REMOVE THIS LINE!!!
 
 (use-modules (artanis utils)(artanis irregex)(srfi srfi-1)(dbi dbi)
-	     (labsolns artass)(rnrs bytevectors)
+	     (labsolns artass)(rnrs bytevectors)(ice-9 popen)
 	     (ice-9 textual-ports)(ice-9 rdelim)(web uri))
 
 
@@ -320,3 +320,178 @@
 		    (view-render "getalldata" (the-environment)))))
 		 ;; (view-render "test" (the-environment)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; Response
+;; public static final int RAW = 0;
+;; public static final int NORM = 1;
+;; public static final int NORM_POS = 2;
+;; public static final int P_ENHANCE = 3;
+ 
+;; Metric
+;; TopN = 1
+;; Mean+2SD = 2
+;; Mean+3SD = 3
+;; >0% enhance = 4
+
+
+
+;; (define stats '(((response_type . 0) (max_response . 0.667751848697662) (min_response . 0.017696063965559) (mean_bkgrnd . 0.257461663052116) (std_dev_bkgrnd . 0.151798759982396) (mean_pos . 0.585150003433228) (stdev_pos . 0.052504768074834) (mean_neg_3_sd . 0.3236000662449897) (mean_neg_2_sd . 0.2539500441255768) (mean_pos_3_sd . 0.74266430765773) (mean_pos_2_sd . 0.690159539582896)) ((response_type . 1) (max_response . 1) (min_response . 0.0265009608119726) (mean_bkgrnd . 0.400153788707584) (std_dev_bkgrnd . 0.234627494089074) (mean_pos . 0.908844977617264) (stdev_pos . 0.0838151252227677) (mean_neg_3_sd . 0.533256372088082) (mean_neg_2_sd . 0.415829003866439) (mean_pos_3_sd . 1.160290353285567) (mean_pos_2_sd . 1.0764752280627994)) ((response_type . 2) (max_response . 1.12151801586151) (min_response . 0.0297213047742844) (mean_bkgrnd . 0.440134737964558) (std_dev_bkgrnd . 0.258646761272284) (mean_pos . 1.00000001490116) (stdev_pos . 0.0884577742520888) (mean_neg_3_sd . 0.569230995446559) (mean_neg_2_sd . 0.445309862077313) (mean_pos_3_sd . 1.2653733376574263) (mean_pos_2_sd . 1.1769155634053377)) ((response_type . 3) (max_response . 13.651291847229) (min_response . -133.296340942383) (mean_bkgrnd . -70.4923045725926) (std_dev_bkgrnd . 32.8073758947133) (mean_pos . 0) (stdev_pos . 12.0112171134045) (mean_neg_3_sd . -100) (mean_neg_2_sd . -100) (mean_pos_3_sd . 36.0336513402135) (mean_pos_2_sd . 24.022434226809))))
+
+
+(define (get-threshold-for-response response metric data)
+  ;; Response  ========================
+  ;; public static final int RAW = 0;
+  ;; public static final int NORM = 1;
+  ;; public static final int NORM_POS = 2;
+  ;; public static final int P_ENHANCE = 3;
+  ;; Metric  ===========================
+  ;; TopN = 1
+  ;; Mean+2SD = 2
+  ;; Mean+3SD = 3
+  ;; >0% enhance = 4
+  ;; =================================
+  ;; note that this does not handle Top N  
+  (let* ((response-key (cond ((equal? response "0") '(response_type . 0))
+			    ((equal? response "1") '(response_type . 1))
+			    ((equal? response "2") '(response_type . 2))
+			    ((equal? response "3") '(response_type . 3))
+			    ))
+	(response-row (assoc response-key data))
+	(metric-key (cond   ((equal? metric "2") 'mean_neg_2_sd)
+			    ((equal? metric "3") 'mean_neg_3_sd)
+			    ((equal? metric "4") 'mean_pos))))
+;;    (cdr (assoc metric-key response-row))))
+    response-row))
+	
+
+(define (prep-ar-for-g a)
+  ;; 1 'unknown' ? 0x000000  black
+  ;; 2 'positive' ? 0x00ff00  green
+  ;; 3 'negative' ? 0xff0000  red
+  ;; 4 'blank' ? 0x969696    grey
+  ;; 5 'edge' 
+  (fold (lambda (x prev)
+          (let* ((index (get-c1 x))	
+		 (response (get-c2 x))
+		 (type (cond ((equal? (get-c3 x ) "1") "0x000000")
+			     ((equal? (get-c3 x ) "2") "0x00ff00")
+			     ((equal? (get-c3 x ) "3") "0xff0000")
+			     ((equal? (get-c3 x ) "4") "0x969696"))))
+            (cons (string-append  index "\t"response "\t" type "\n")
+		  prev)))
+        '() a))
+
+
+  
+(assayrun-define getarid2
+		 (options #:conn #t #:cookies '(names id infile infile2 response threshold body))
+(lambda (rc)
+  (let* (
+	 (help-topic "assayrun")
+	 (arid  (get-from-qstr rc "arid"))
+	 (prjid (:cookies-value rc "prjid"))
+	 (sid (:cookies-value rc "sid"))
+	 (outfile (get-rand-file-name "ar" "png"))
+	 (response "1")
+	 (metric "3")
+	 (y-label (cond ((equal? response "0") "Background Subtracted")
+		       ((equal? response "1") "Normalized")
+		       ((equal? response "2") "Normalized to positive controls")
+		       ((equal? response "3") "% Enhanced")))
+	 (threshold (cdaar (DB-get-all-rows (:conn rc  (string-append "select mean_neg_3_sd from assay_run_stats where assay_run_id=" arid " AND response_type =" response )))))
+	(thresholds (number->string threshold))
+	(sql (string-append "select assay_run.id, assay_run.assay_run_sys_name, assay_run.assay_run_name, assay_run.descr, assay_type.assay_type_name, plate_layout_name.sys_name, plate_layout_name.name FROM assay_run, assay_type, plate_layout_name WHERE assay_run.plate_layout_name_id=plate_layout_name.id AND assay_run.assay_type_id=assay_type.id AND assay_run.id =" arid ))
+	(holder (DB-get-all-rows (:conn rc sql)))
+	 (body (string-concatenate (prep-ar-rows-no-link holder))) ;; this is the top descriptive table
+	 (body-encode (htmlify body))
+	
+	 ;;this is the main data table
+	 (sql-pre (cond ((equal? response "0") "SELECT  ROW_NUMBER () OVER (ORDER BY assay_result.bkgrnd_sub DESC), assay_result.bkgrnd_sub, plate_layout.well_type_id FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id AND assay_run.ID =")
+	 	   ((equal? response "1") "SELECT  ROW_NUMBER () OVER (ORDER BY assay_result.norm DESC), assay_result.norm, plate_layout.well_type_id FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id AND assay_run.ID =")	
+	 	   ((equal? response "2") "SELECT  ROW_NUMBER () OVER (ORDER BY assay_result.norm_pos DESC), assay_result.norm_pos, plate_layout.well_type_id FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id AND assay_run.ID =")
+	 	   ((equal? response "3") "SELECT  ROW_NUMBER () OVER (ORDER BY assay_result.p_enhance DESC), assay_result.p_enhance, plate_layout.well_type_id FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id AND assay_run.ID =")
+	 	   ))
+	
+	 (holder2 (DB-get-all-rows (:conn rc (string-append sql-pre arid))))
+	 (nrows (length holder2))
+	 (data-body  (string-concatenate (prep-ar-for-g holder2)))
+
+	 (sql-hits (cond ((equal? response "0") "SELECT  ROW_NUMBER () OVER (ORDER BY assay_result.bkgrnd_sub DESC), assay_result.bkgrnd_sub, plate_layout.well_type_id FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id AND plate_layout.well_type_id=1 AND assay_result.bkgrnd_sub > " )
+	 	   ((equal? response "1") "SELECT  ROW_NUMBER () OVER (ORDER BY assay_result.norm DESC), assay_result.norm, plate_layout.well_type_id FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id AND plate_layout.well_type_id=1 AND assay_result.norm > ")	
+	 	   ((equal? response "2") "SELECT  ROW_NUMBER () OVER (ORDER BY assay_result.norm_pos DESC), assay_result.norm_pos, plate_layout.well_type_id FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id AND plate_layout.well_type_id=1 AND assay_result.norm_pos > ")
+	 	   ((equal? response "3") "SELECT  ROW_NUMBER () OVER (ORDER BY assay_result.p_enhance DESC), assay_result.p_enhance, plate_layout.well_type_id FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id AND plate_layout.well_type_id=1 AND assay_result.p_enhance > " )
+	 	   ))
+	
+	 (holder (DB-get-all-rows (:conn rc (string-append sql-hits  thresholds " AND assay_run.ID =" arid))))
+	(num-hits (number->string (length holder)))
+	(xmax (number->string (+ nrows 4)))
+	(hit-num-text (string-append "hits: " num-hits))
+	(hit-num-text-x (number->string (* nrows 0.1)))
+	(hit-num-text-y (number->string (+ threshold (* threshold 0.5))))
+	(metric-text (cond   ((equal? metric "2") "> mean(pos)")
+			    ((equal? metric "3") "mean(neg) + 2SD")
+			    ((equal? metric "4") "mean(neg) + 3SD")
+			    (else "Top N")))
+	(metric-text-x (number->string (* nrows 0.1)))
+	(metric-text-y (number->string (- threshold (* threshold 0.5))))	
+	(gplot-script (get-gplot-script outfile y-label thresholds xmax hit-num-text hit-num-text-x hit-num-text-y metric-text metric-text-x metric-text-y data-body))
+	(p  (open-output-file (get-rand-file-name "script" "txt")))
+	(dummy (display p gplot-script))
+	(dummy (force-output p))
+
+ 	;; (port (open-output-pipe "gnuplot"))
+	;; (dummy (display gplot-script port))
+	(outfile2 (string-append "\"../" outfile "\""))
+	(hit-lists (get-hit-lists-for-arid arid rc))	
+	(hit-lists-encode (if  (equal? "" hit-lists) #f (htmlify hit-lists)))
+	(aridq (addquotes arid))  ;; for passing to html
+	(responseq (addquotes response))
+	(thresholdq (addquotes thresholds))
+	(metricq (addquotes metric))
+	(body-encodeq (addquotes body-encode))
+	(hit-lists-encodeq (if hit-lists-encode (addquotes  hit-lists-encode) #f))
+	)
+    (view-render "test" (the-environment)))))
+   ;; (view-render "getarid2" (the-environment)))))
+
+
+
+
+
+(assayrun-define test
+	(options #:conn #t
+	       	 #:cookies '(names prjid lnuser userid group sid))
+		(lambda (rc)
+		  (let* ((help-topic "gplot")
+			;; (qstr  (:from-post rc 'get))
+			 (prjid (:cookies-value rc "prjid"))
+			 (sid (:cookies-value rc "sid"))
+			 (stats (DB-get-all-rows (:conn rc  (string-append "select response_type,  max_response, min_response, mean_bkgrnd, std_dev_bkgrnd,  mean_pos,  stdev_pos, mean_neg_3_sd, mean_neg_2_sd, mean_pos_3_sd,  mean_pos_2_sd from assay_run_stats where assay_run_id=1"))))
+			 (prjidq (addquotes prjid))
+			 (sidq (addquotes sid))    			
+			 )
+		    (view-render "test" (the-environment)) ))
+		 )
+
+
+(define (get-gplot-script out-file ylabel threshold xmax hit-num-text hit-num-text-x hit-num-text-y metric-text metric-text-x metric-text-y data)
+  ;;xmax is 100 for 96 well plates, 385 for 384 well plate etc
+  ;; hit-num-text e.g. 38 hits
+  ;; metric-text e.g. Norm + 3SD
+  (let* ((str1 "reset session\nset terminal pngcairo size 600,400\nset output '")
+	 (str2 "'\nset key box ins vert right top\nset grid\nset arrow 1 nohead from 0,")
+	 (str3 " to ")
+	 (str4 ", ")
+	 (str5 " linewidth 1 dashtype 2\nset xlabel \"Index\"\nset ylabel \"Norm\"\nset label '")
+	 (str6 " at ")
+	 (str7 ",")
+	 (str8 "\nset label '")
+	 (str9 " at ")
+	 (str10 ",")
+	 (str11 "\nplot '-' using 1:2:(map_color(stringcolumn(3))) notitle with points pt 2 lc rgbcolor variable, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\"\n"))
+   (string-append str1 out-file str2 threshold str3 xmax str4 threshold str5 hit-num-text str6 hit-num-text-x str7 hit-num-text-y str8 metric-text str9 metric-text-x str10 metric-text-y str11 data  ) ))

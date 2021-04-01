@@ -7,7 +7,12 @@
   <h1>Test</h1><br><br>
 
 
-Threshold:&nbsp;&nbsp;<%= numhits %><br><br>
+result:&nbsp;&nbsp;<%= arid %><br><br>
+<%= holder %><br><br>
+
+<%= response %><br><br>
+<%= outfile %><br><br>
+
 
 
  

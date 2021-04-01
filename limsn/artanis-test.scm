@@ -39,28 +39,35 @@
 (validate-key "jf8d9slkdow09ieieurie" "info@labsolns.com" "e118bd1efb4b4f5367cf99976267c5ad")
 
 
-(define a '(((dest . 7)) ((dest . 8)) ((dest . 9)) ((dest . 10)) ((dest . 11)) ((dest . 12))))
+	
 
-(map  cdar a)
 
-(define b '(7 8 9 10 11 12))
-
-(define c (map number->string b))
-
-(map (string-append "," _) c)
+(define a '(((response_type . 0) (max_response . 0.667751848697662) (min_response . 0.017696063965559) (mean_bkgrnd . 0.257461663052116) (std_dev_bkgrnd . 0.151798759982396) (mean_pos . 0.585150003433228) (stdev_pos . 0.052504768074834) (mean_neg_3_sd . 0.3236000662449897) (mean_neg_2_sd . 0.2539500441255768) (mean_pos_3_sd . 0.74266430765773) (mean_pos_2_sd . 0.690159539582896)) ((response_type . 1) (max_response . 1) (min_response . 0.0265009608119726) (mean_bkgrnd . 0.400153788707584) (std_dev_bkgrnd . 0.234627494089074) (mean_pos . 0.908844977617264) (stdev_pos . 0.0838151252227677) (mean_neg_3_sd . 0.533256372088082) (mean_neg_2_sd . 0.415829003866439) (mean_pos_3_sd . 1.160290353285567) (mean_pos_2_sd . 1.0764752280627994)) ((response_type . 2) (max_response . 1.12151801586151) (min_response . 0.0297213047742844) (mean_bkgrnd . 0.440134737964558) (std_dev_bkgrnd . 0.258646761272284) (mean_pos . 1.00000001490116) (stdev_pos . 0.0884577742520888) (mean_neg_3_sd . 0.569230995446559) (mean_neg_2_sd . 0.445309862077313) (mean_pos_3_sd . 1.2653733376574263) (mean_pos_2_sd . 1.1769155634053377)) ((response_type . 3) (max_response . 13.651291847229) (min_response . -133.296340942383) (mean_bkgrnd . -70.4923045725926) (std_dev_bkgrnd . 32.8073758947133) (mean_pos . 0) (stdev_pos . 12.0112171134045) (mean_neg_3_sd . -100) (mean_neg_2_sd . -100) (mean_pos_3_sd . 36.0336513402135) (mean_pos_2_sd . 24.022434226809))))
 
 
 
-(define (add-comma lst result)
-  (if (null? (cdr lst))
-      (begin
-	(set! result (string-append result (car lst)))
-	result)
-      (begin
-	(set! result (string-append result (car lst) ","))
-	(add-comma (cdr lst) result))))
+(define (get-threshold-for-response response metric data)
+  ;; Response  ========================
+  ;; public static final int RAW = 0;
+  ;; public static final int NORM = 1;
+  ;; public static final int NORM_POS = 2;
+  ;; public static final int P_ENHANCE = 3;
+  ;; Metric  ===========================
+  ;; TopN = 1
+  ;; Mean+2SD = 2
+  ;; Mean+3SD = 3
+  ;; >0% enhance = 4
+  ;; =================================
+  ;; note that this does not handle Top N  
+  (let* ((response-key (cond ((equal? response "0") '(response_type . 0))
+			    ((equal? response "1") '(response_type . 1))
+			    ((equal? response "2") '(response_type . 2))
+			    ((equal? response "3") '(response_type . 3))
+			    ))
+	(response-row (assoc response-key data))
+	(metric-key (cond   ((equal? metric "2") 'mean_neg_2_sd)
+			    ((equal? metric "3") 'mean_neg_3_sd)
+			    ((equal? metric "4") 'mean_pos))))
+    (cdr (assoc metric-key response-row))))
 
-(add-comma c "")
-
-
-select id, sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest from plate_layout_name where id IN (7, 8, 9, 10, 11, 12); 
+(get-threshold-for-response "1" "3" a)
