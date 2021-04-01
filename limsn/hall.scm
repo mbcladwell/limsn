@@ -1,0 +1,21 @@
+(hall-description
+  (name "lnserver")
+  (prefix "")
+  (version "0.1")
+  (author "Peter LaPan")
+  (copyright (2021))
+  (synopsis "")
+  (description "")
+  (home-page "")
+  (license proprietary)
+  (dependencies `())
+  (files (libraries ((scheme-file "lnserver")))
+         (tests ())
+         (programs ())
+         (documentation
+           ((text-file "README")
+            (directory "doc" ((texi-file "lnserver")))
+            (directory "app/controllers" ())
+ (directory "app/views/assayrun" ())))
+         (infrastructure
+           ((scheme-file "guix") (scheme-file "hall")))))

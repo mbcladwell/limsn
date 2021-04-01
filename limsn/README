@@ -1,0 +1,83 @@
+http://localhost:3000/assayrun/getid?id=1
+
+/gnu/store/jgl9d4axpavsv83z2f1z1himnkbsxxqj-guile-2.2.7/bin/guile
+
+
+## Examples
+
+* layout.scm
+ recursion with returned variable or list
+ read a file and parse from server
+ 
+ * target.scm
+ 
+ assoc-ref to pull out a value by key (assoc-ref holder "cust_id")
+
+* hidden data
+
+view layout select
+      <input type="hidden" id="infile" name="infile" value=&quot;<%= infile %>&quot; >
+      
+       <a href=/plateset/add?format=96&type=master&prjid=<%= prjid %>>Add to PRJ-<%= prjid %></a>
+       <a href="http://www.labsolns.com/software/<%= help-topic %> ">HELP</a></li>
+
+
+ * from post data
+ 
+ layout.scm
+ (uri-decode (:from-post rc 'get-vals "datatransfer")))
+ 
+ (cond construct
+ 
+ * quotes
+ 
+ getarid.html.tpl  use addquotes when passing a variable value=<%= body-encode %> >
+
+* passing variables back and forth with uri-decode and object->string
+  plateset.scm import assay data
+
+
+* read files and check for blank lines
+         plateset.scm
+         
+* create an array for postgres
+
+  extra.scm
+  '{{1,2,3},{4,5,6},{7,8,9}}'
+
+*  #{urweyru}#  is a read symbol use (symbol->string to get "urweyru"
+
+
+*  concatenate html code using javascipt in getps.html.tpl
+
+ var str1 = "/hitlist/addtoprj?prjid=";
+ var str2 = <%= prjid %>;
+ var res = str1.concat(str2);
+ document.getElementById("hitlistbutton").href = res;
+
+* LEFT JOIN with many-to-many table using as alias
+plate.scm  getallwellsforps
+
+;; default session is one hour.  Change it in:
+;; artanis/artanis/session.scm L388
+;; artanis/artanis/cookie.scm L129   to 21600 for 6 hours
+;; artanis/artanis/oht.scm L264   to 21600 for 6 hours
+
+## todo
+
+
+worklists should have barcode ids
+
+split plate sets on plate menu
+
+restrict administrative functionality
+
+
+
+
+
+
+
+
+
+

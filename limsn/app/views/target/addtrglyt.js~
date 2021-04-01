@@ -1,0 +1,19 @@
+
+function repSelection(e) {
+    
+    switch(document.getElementById("reps").value = e.target.value) {
+  case "1":
+    // code block
+    break;
+  case "2":
+	// code block
+	document.getElementById("reps4").disabled = true;
+	break;
+  case "4":
+    // code block
+	break;
+	
+  default:
+    // code block
+} 
+}

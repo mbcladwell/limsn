@@ -1,0 +1,12 @@
+;; This an Artanis ENTRY file, don't remove it!
+
+ (use-modules (artanis artanis)
+              ;; Put modules you want to be imported here
+              ;; only for this file, not controllers/views
+)
+ ;; Put whatever you want to be called before server initilization here
+(add-to-load-path "/home/mbc/projects/limsn")
+
+ (init-server)
+
+ ;; Put whatever you want to be called before server running here

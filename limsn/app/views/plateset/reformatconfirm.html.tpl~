@@ -1,0 +1,98 @@
+<!-- project#add view template of lnserver
+          Please add your license header here.
+          This file is generated automatically by GNU Artanis. -->
+  
+<@include header.tpl %>
+<div class="container">
+  <h2>Reformat Plate Set</h2>
+  <form action="/plateset/reformataction" method="post">
+    <div class="form-row">
+      <div class="form-group col-md-6">
+	<label>Date:</label> &nbsp <b><%= today %></b>
+      </div>
+      <div class="form-group col-md-6">
+	<label>Owner:</label> &nbsp <b></b>
+      </div>
+    </div>
+    <hr>
+<div class="form-row">
+      <div class="form-group col-md-12  text-center">
+	<label><b>Source Plate Set PS-<%= psid %></b></label> 
+      </div>
+    </div>
+
+ <div class="form-row">
+
+      <div class="form-group col-md-6">
+	<label for="tot-pl">Total number of plates:</label>&nbsp&nbsp<b><%= nplates %></b>
+	<input type="hidden" id="plates" name="nplates" value=<%= nplates %>>
+      </div>
+   <div class="form-group col-md-6">     
+	<label for="format">Plate Format:</label>&nbsp&nbsp<b><%= format %></b>
+	<input type="hidden" id="format" name="format" value=<%= format %>>
+   </div>
+ </div>
+
+ <div class="form-row">
+   <div class="form-group col-md-12">
+     <label for="sample">Sample Layout:</label>&nbsp&nbsp<b> <%= lyt-txt %></b>
+   </div>
+ </div>
+
+    <hr>
+<div class="form-row">
+      <div class="form-group col-md-12 text-center">
+	<label><b>Destination (Reformatted) Plate Set</b> </label> 
+      </div>
+    </div>
+
+    
+    <div class="form-row">
+      <div class="form-group col-md-6">
+	<label for="name">New Plate Set Name:</label>  <input type="text" id="psname" name="psname"  class="form-control"  value="" required>
+      </div>
+      <div class="form-group col-md-6">
+	<label for="descr">New Plate Set Description:</label>  <input type="text" id="descr" name="descr"  class="form-control"  value="" required>
+      </div>
+    </div>
+
+ 
+ <div class="form-row">
+ <div class="form-group col-md-6">
+   <label for="type">New Plate Set Type:</label>
+   <select name="type" id="type" onchange="typeSelection(event)"  class="custom-select" > <%= plate-types %> </select> 
+ </div>
+<div class="form-group col-md-6">
+  <label for="format">New Format:&nbsp&nbsp<%= new-format %>&nbsp&nbsp well</label>
+ </div>
+</div>
+
+
+ <div class="form-row">
+ <div class="form-group col-md-6">
+   <label for="type">Sample Replication:</label>
+   <select name="samprep" id="samprep" onchange="sampRepSelection(event)"  class="custom-select" >
+      <option value="1">1</option>  
+	  <option value="2">2</option>
+	  <option value="4">4</option> </select> 
+ </div>
+ <div class="form-group col-md-6">
+   <label for="type">Target Replication:</label>
+   <select name="targrep" id="targrep" onchange=""  class="custom-select" > </select> 
+ </div>
+</div>
+
+
+
+ 
+<input type="hidden" id="lytid" name="lytid" value=<%= lyt-id %>>
+
+<input type="submit" class="btn btn-primary" value="Confirm and submit">
+</form> 
+</div>
+
+<script src="reformatps.js"></script>
+
+<@include footer.tpl %>
+
+ 

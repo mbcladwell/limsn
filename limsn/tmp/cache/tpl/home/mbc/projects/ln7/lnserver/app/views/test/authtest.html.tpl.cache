@@ -1,0 +1,23 @@
+(display "<!-- test#logtest view template of lnserver
+          Please add your license header here.
+          This file is generated automatically by GNU Artanis.
+
+   
+ -->
+
+<html>
+  <head>
+    <title>")(display  (current-appname) )(display "
+    </title>
+    
+
+  </head>
+  <body>
+    <h1>test#authtest</h1>
+    <p>Rendered from app/views/test/authtest.html.tpl.</p>
+Author validated:")(display  check-value)(display "<br>
+    Requested URL:    ")(display  requested-url )(display "<br>
+    Header sid: ")(display  header-sid )(display "
+  </body>
+</html>
+")

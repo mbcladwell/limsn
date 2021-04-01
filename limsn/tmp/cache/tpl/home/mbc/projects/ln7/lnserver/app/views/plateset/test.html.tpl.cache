@@ -1,0 +1,22 @@
+(display "<!-- project#add view template of lnserver
+          Please add your license header here.
+          This file is generated automatically by GNU Artanis. -->
+  
+<html></body>
+
+  <h1>Test</h1><br><br>
+
+ prerc:&nbsp; ")(display  prerc )(display "<br><br>
+ prercset:&nbsp; ")(display  prercset )(display "<br><br>
+ drop:&nbsp; ")(display  drop )(display "<br><br>
+ postrc:&nbsp; ")(display  postrc )(display "<br><br>
+  postrcset:&nbsp;")(display  postrcset )(display "<br><br>
+  	
+ 	
+ 
+</body></html>
+
+
+
+
+")
