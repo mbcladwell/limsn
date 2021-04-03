@@ -7,7 +7,7 @@
 ;; (add-to-load-path "/home/mbc/projects/ln4/")
 
 (use-modules (artanis artanis)(artanis utils)(artanis irregex)	     
-	     (srfi srfi-1)(dbi dbi) (labsolns artass)
+	     (srfi srfi-1)(dbi dbi) (labsolns artass)(labsolns gplot)
 	      (ice-9 textual-ports)(ice-9 rdelim)(rnrs bytevectors)(web uri)(ice-9 pretty-print))
 
 (define (prep-lyt-rows a)
@@ -268,37 +268,41 @@
 ;; 	       ))
 
 
-(define (prep-ar-for-g a)
+(define (prep-lyt-for-g a)
   ;; 1 'unknown' ? 0x000000  black
   ;; 2 'positive' ? 0x00ff00  green
   ;; 3 'negative' ? 0xff0000  red
   ;; 4 'blank' ? 0x969696    grey
-  ;; 5 'edge' 
+  ;; 5 'edge'    0x33FFFF    lightblue
+
+  ;; rep1 0x000000  black
+  ;; rep2
+  ;; rep3
+  ;; rep4
   (fold (lambda (x prev)
-          (let* ((index (get-c1 x))	
-		 (response (get-c2 x))
+          (let* ((row-num (get-c1 x))	
+		 (col (get-c2 x))
 		 (type (cond ((equal? (get-c3 x ) "1") "0x000000")
 			     ((equal? (get-c3 x ) "2") "0x00ff00")
 			     ((equal? (get-c3 x ) "3") "0xff0000")
-			     ((equal? (get-c3 x ) "4") "0x969696"))))
-            (cons (string-append  index "\t"response "\t" type "\n")
+			     ((equal? (get-c3 x ) "4") "0x969696")			     
+			     ((equal? (get-c3 x ) "5") "0x33FFFF")))
+		 (replicates (cond ((equal? (get-c4 x ) "1") "0x000000")
+			     ((equal? (get-c4 x ) "2") "0x00ff00")
+			     ((equal? (get-c4 x ) "3") "0xff0000")
+			     ((equal? (get-c4 x ) "4") "0x969696")			     
+			     ((equal? (get-c4 x ) "5") "0x33FFFF")))
+		 (target (cond ((equal? (get-c4 x ) "1") "0x000000")
+			     ((equal? (get-c4 x ) "2") "0x00ff00")
+			     ((equal? (get-c4 x ) "3") "0xff0000")
+			     ((equal? (get-c4 x ) "4") "0x969696")			     
+			     ((equal? (get-c4 x ) "5") "0x33FFFF")))
+		 )
+            (cons (string-append  row-num "\t" col  "\t" type "\t" replicates "\t" target "\n")
 		  prev)))
         '() a))
 
 
-(define (prep-lyt-for-g a)
-  (fold (lambda (x prev)
-          (let* ((format (get-c1 x))	
-		 (well (get-c2 x))
-		 (type (get-c3 x))
-		 (row (result-ref x "row"))
-		 (row-num (get-c5 x))
-		 (col (result-ref x "col"))
-		 (replicates (get-c7 x ))
-		 (targets (get-c8 x )))
-            (cons (string-append  format "\t" well "\t" type "\t" row "\t" row-num "\t" col "\t" replicates "\t" targets  "\n")
-		  prev)))
-        '() a))
 
 
 (define (make-layout-plot outfile response metric threshold nrows num-hits data-body )
@@ -328,6 +332,7 @@
 	 ;; (dummy (begin
 	 ;; 	  (put-string p gplot-script )
 	 ;; 	  (force-output p)))
+	 
 	 (port (open-output-pipe "gnuplot"))
 	 )
     (begin
@@ -357,7 +362,6 @@
 	 (str13 "e"))   
    (string-append str1 (string-append "pub/" out-file) str2 threshold str3 xmax str4 threshold str5 ylabel str6  hit-num-text str7 hit-num-text-x str8 hit-num-text-y str9 metric-text str10 metric-text-x str11 metric-text-y str12 data str13 ) ))
 
-(define ns-list '(( 1 . 8 )( 2 . 7 )( 3 . 6 )( 4 . 5 )( 5 . 4 )( 6 . 3 )( 7 . 2 )( 8 . 1 )))
 
 (define (get-layout-table-for-g id rc)
   (let* ((table-header (string-append "format\twell\ttype\trow\trow.num\tcol\treplicates\ttargets\n"))
@@ -398,7 +402,7 @@
 			(sql (string-append "select id, sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest from plate_layout_name where id IN (" allidscomma ") ORDER BY source_dest DESC"))
 			(holder  (DB-get-all-rows (:conn rc sql)))
 			(body (string-concatenate (prep-lyt-rows holder)))
-
+			;;gnuplot stuff starts here
 			
 			 (dummy3 (get-data-for-layout id (string-append "pub/" infile) rc))
  			 (dummy4 (system (string-append "Rscript --vanilla rscripts/plot-layout.R pub/" infile " pub/" spl-out " pub/" spl-rep-out " pub/" trg-rep-out " " format)))

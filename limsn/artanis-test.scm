@@ -1,4 +1,4 @@
-;; /gnu/store/0w76khfspfy8qmcpjya41chj3bgfcy0k-guile-3.0.4/bin/guile
+n-;; /gnu/store/0w76khfspfy8qmcpjya41chj3bgfcy0k-guile-3.0.4/bin/guile
 ;; /gnu/store/jgl9d4axpavsv83z2f1z1himnkbsxxqj-guile-2.2.7/bin/guile
 ;; /usr/lib/x86_64-linux-gnu/guile/3.0/bin/guile
 
@@ -42,66 +42,17 @@
 
 
 
-select plate_format_id, by_col, well_type_id,row, row_num, col, plate_layout.replicates, plate_layout.target from plate_layout_name, plate_layout, well_numbers where plate_layout.well_by_col=well_numbers.by_col and plate_layout.plate_layout_name_id = plate_layout_name.id and well_numbers.plate_format=plate_layout_name.plate_format_id AND plate_layout.plate_layout_name_id =10;
+select  row_num, col, well_type_id, plate_layout.replicates, plate_layout.target from plate_layout_name, plate_layout, well_numbers where plate_layout.well_by_col=well_numbers.by_col and plate_layout.plate_layout_name_id = plate_layout_name.id and well_numbers.plate_format=plate_layout_name.plate_format_id AND plate_layout.plate_layout_name_id =10;
 
+row_num | col | well_type_id | replicates | target 
+---------+-----+--------------+------------+--------
+       1 | 1   |            1 |          1 |      1
+       2 | 1   |            1 |          2 |      1
+       3 | 1   |            1 |          1 |      1
+       4 | 1   |            1 |          2 |      1
+       5 | 1   |            1 |          1 |      1
+       6 | 1   |            1 |          2 |      1
 
-(define ns-list
-  ;; 96 well rows
-  '((1 . 8)(2 . 7)(3 . 6)(4 . 5)(5 . 4)(6 . 3)(7 . 2)(8 . 1)))
-
-
-
-  (1 . 16)
-  (2 . 15)
-  (3 . 14)
-  (4 . 13)
-  (5 . 12)
-  (6 . 11)
-  (7 . 10)
-  (8 . 9)
-  (9 . 8)
-  (10 . 7)
-  (11 . 6)
-  (12 . 5)
-  (13 . 4)
-  (14 . 3)
-  (15 . 2)
-(16 . 1)
-
-
-
-(1 . 32)
-  (2 . 31)
-  (3 . 30)
-  (4 . 29)
-  (5 . 28)
-  (6 . 27)
-  (7 . 26)
-  (8 . 25)
-  (9 . 24)
-  (10 . 23)
-  (11 . 22)
-  (12 . 21)
-  (13 . 20)
-  (14 . 19)
-  (15 . 18)
-  (16 . 17)
-  (17 . 16)
-  (18 . 15)
-  (19 . 14)
-  (20 . 13)
-  (21 . 12)
-  (22 . 11)
-  (23 . 10)
-  (24 . 9)
-  (25 . 8)
-  (26 . 7)
-  (27 . 6)
-  (28 . 5)
-  (29 . 4)
-  (30 . 3)
-  (31 . 2)
-  (32 . 1)
 
 
 (assq-ref ns-list 1)
