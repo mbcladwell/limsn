@@ -22,9 +22,6 @@
 		    </div>
 		</div>
 	    </div> 
-	    <input type="hidden" id="infile" name="infile" value=<%= infileq %>>
-	    <input type="hidden" id="infile2" name="infile2" value=<%= infile2q %>>
-	    <input type="hidden" id="hitfile" name="hitfile" value=<%= hitfileq %>>
 	    <input type="hidden" id="arid" name="arid" value=<%= aridq %>>
 	    <input type="hidden" id="response" name="response" value=<%= responseq %>>
 	    <input type="hidden" id="threshold" name="threshold" value=<%= thresholdq %>>
@@ -73,9 +70,6 @@
     </div>      
   </div>
 
-  <input type="hidden" id="infile" name="infile" value=<%= infileq %>>
-  <input type="hidden" id="infile2" name="infile2" value=<%= infile2q %>>
-  <input type="hidden" id="hitfile" name="hitfile" value=<%= hitfileq %>>
   <input type="hidden" id="arid" name="arid" value=<%= aridq %>>
   <input type="hidden" id="bodyencode" name="bodyencode" value=<%= body-encodeq %>>
   <input type="hidden" id="hitlistsencode" name="hitlistsencode" value=<%= hit-lists-encodeq %>>

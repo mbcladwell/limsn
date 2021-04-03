@@ -10,7 +10,6 @@
   (get "/target/gettrglyt")
   (get "/users/add")
   (get "/assayrun/getarid")
-  (get "/assayrun/getarid2")
   (get "/layout/select")
   (get "/plate/getpltforps")
   (get "/target/gettrglytbyid")

@@ -39,35 +39,69 @@
 (validate-key "jf8d9slkdow09ieieurie" "info@labsolns.com" "e118bd1efb4b4f5367cf99976267c5ad")
 
 
-	
-
-
-(define a '(((response_type . 0) (max_response . 0.667751848697662) (min_response . 0.017696063965559) (mean_bkgrnd . 0.257461663052116) (std_dev_bkgrnd . 0.151798759982396) (mean_pos . 0.585150003433228) (stdev_pos . 0.052504768074834) (mean_neg_3_sd . 0.3236000662449897) (mean_neg_2_sd . 0.2539500441255768) (mean_pos_3_sd . 0.74266430765773) (mean_pos_2_sd . 0.690159539582896)) ((response_type . 1) (max_response . 1) (min_response . 0.0265009608119726) (mean_bkgrnd . 0.400153788707584) (std_dev_bkgrnd . 0.234627494089074) (mean_pos . 0.908844977617264) (stdev_pos . 0.0838151252227677) (mean_neg_3_sd . 0.533256372088082) (mean_neg_2_sd . 0.415829003866439) (mean_pos_3_sd . 1.160290353285567) (mean_pos_2_sd . 1.0764752280627994)) ((response_type . 2) (max_response . 1.12151801586151) (min_response . 0.0297213047742844) (mean_bkgrnd . 0.440134737964558) (std_dev_bkgrnd . 0.258646761272284) (mean_pos . 1.00000001490116) (stdev_pos . 0.0884577742520888) (mean_neg_3_sd . 0.569230995446559) (mean_neg_2_sd . 0.445309862077313) (mean_pos_3_sd . 1.2653733376574263) (mean_pos_2_sd . 1.1769155634053377)) ((response_type . 3) (max_response . 13.651291847229) (min_response . -133.296340942383) (mean_bkgrnd . -70.4923045725926) (std_dev_bkgrnd . 32.8073758947133) (mean_pos . 0) (stdev_pos . 12.0112171134045) (mean_neg_3_sd . -100) (mean_neg_2_sd . -100) (mean_pos_3_sd . 36.0336513402135) (mean_pos_2_sd . 24.022434226809))))
 
 
 
-(define (get-threshold-for-response response metric data)
-  ;; Response  ========================
-  ;; public static final int RAW = 0;
-  ;; public static final int NORM = 1;
-  ;; public static final int NORM_POS = 2;
-  ;; public static final int P_ENHANCE = 3;
-  ;; Metric  ===========================
-  ;; TopN = 1
-  ;; Mean+2SD = 2
-  ;; Mean+3SD = 3
-  ;; >0% enhance = 4
-  ;; =================================
-  ;; note that this does not handle Top N  
-  (let* ((response-key (cond ((equal? response "0") '(response_type . 0))
-			    ((equal? response "1") '(response_type . 1))
-			    ((equal? response "2") '(response_type . 2))
-			    ((equal? response "3") '(response_type . 3))
-			    ))
-	(response-row (assoc response-key data))
-	(metric-key (cond   ((equal? metric "2") 'mean_neg_2_sd)
-			    ((equal? metric "3") 'mean_neg_3_sd)
-			    ((equal? metric "4") 'mean_pos))))
-    (cdr (assoc metric-key response-row))))
+select plate_format_id, by_col, well_type_id,row, row_num, col, plate_layout.replicates, plate_layout.target from plate_layout_name, plate_layout, well_numbers where plate_layout.well_by_col=well_numbers.by_col and plate_layout.plate_layout_name_id = plate_layout_name.id and well_numbers.plate_format=plate_layout_name.plate_format_id AND plate_layout.plate_layout_name_id =10;
 
-(get-threshold-for-response "1" "3" a)
+
+(define ns-list
+  ;; 96 well rows
+  '((1 . 8)(2 . 7)(3 . 6)(4 . 5)(5 . 4)(6 . 3)(7 . 2)(8 . 1)))
+
+
+
+  (1 . 16)
+  (2 . 15)
+  (3 . 14)
+  (4 . 13)
+  (5 . 12)
+  (6 . 11)
+  (7 . 10)
+  (8 . 9)
+  (9 . 8)
+  (10 . 7)
+  (11 . 6)
+  (12 . 5)
+  (13 . 4)
+  (14 . 3)
+  (15 . 2)
+(16 . 1)
+
+
+
+(1 . 32)
+  (2 . 31)
+  (3 . 30)
+  (4 . 29)
+  (5 . 28)
+  (6 . 27)
+  (7 . 26)
+  (8 . 25)
+  (9 . 24)
+  (10 . 23)
+  (11 . 22)
+  (12 . 21)
+  (13 . 20)
+  (14 . 19)
+  (15 . 18)
+  (16 . 17)
+  (17 . 16)
+  (18 . 15)
+  (19 . 14)
+  (20 . 13)
+  (21 . 12)
+  (22 . 11)
+  (23 . 10)
+  (24 . 9)
+  (25 . 8)
+  (26 . 7)
+  (27 . 6)
+  (28 . 5)
+  (29 . 4)
+  (30 . 3)
+  (31 . 2)
+  (32 . 1)
+
+
+(assq-ref ns-list 1)

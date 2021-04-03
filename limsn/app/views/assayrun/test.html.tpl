@@ -4,15 +4,18 @@
   
 <html></body>
 
-  <h1>Test</h1><br><br>
+    <h1>Test</h1><br><br>
 
 
-result:&nbsp;&nbsp;<%= arid %><br><br>
-<%= holder %><br><br>
+    result:&nbsp;&nbsp;<%= arid %><br><br>
 
-<%= response %><br><br>
-<%= outfile %><br><br>
 
+    <%= response %><br><br>
+    <%= metric %><br><br>
+    
+    <%= thresholdstr %><br><br>
+    <%= arid %><br><br>
+    <%= num-hits %><br><br>
 
 
  
