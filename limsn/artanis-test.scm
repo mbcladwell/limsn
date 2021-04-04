@@ -56,3 +56,9 @@ row_num | col | well_type_id | replicates | target
 
 
 (assq-ref ns-list 1)
+
+
+
+(define get-96-row-labels '( (1 . "A")(2 . “B”)(3 . “C”)(4 . “D”)(5 . “E”)(6 . “F”)(7 . “G”)(8 . “H”)))
+
+(assq-ref get-96-row-labels 1)

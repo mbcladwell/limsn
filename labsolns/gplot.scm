@@ -4,6 +4,9 @@
 	    tef-lst
 	    fts-lst
 	    make-scatter-plot
+	    get-96-row-labels
+	    get-384-row-labels
+	    get-1536-row-labels
 	    ))
 
 (use-modules (artanis artanis)(artanis utils)(artanis config) (ice-9 local-eval) (srfi srfi-1)
@@ -22,6 +25,11 @@
   ;; 1536 well rows
 '((1 . 32)(2 . 31)(3 . 30)(4 . 29)(5 . 28)(6 . 27)(7 . 26)(8 . 25)(9 . 24)(10 . 23)(11 . 22)(12 . 21)(13 . 20)(14 . 19)(15 . 18)(16 . 17)(17 . 16)(18 . 15)(19 . 14)(20 . 13)(21 . 12)(22 . 11)(23 . 10)(24 . 9)(25 . 8)(26 . 7)(27 . 6)(28 . 5)(29 . 4)(30 . 3)(31 . 2)(32 . 1)))
 
+(define get-96-row-labels '( (1 . "A")(2 . "B")(3 . "C")(4 . "D")(5 . "E")(6 . "F")(7 . "G")(8 . "H")))
+
+(define get-384-row-labels '( (1 . "A")(2 . "B")(3 . "C")(4 . "D")(5 . "E")(6 . "F")(7 . "G")(8 . "H")(9 . "I")(10 . "J")(11 . "K")(12 . "L")(13 . "M")(14 . "N")(15 . "O")(16 . "P")))
+
+(define get-1536-row-labels '( (1 . "A")(2 . "B")(3 . "C")(4 . "D")(5 . "E")(6 . "F")(7 . "G")(8 . "H")(9 . "I")(10 . "J")(11 . "K")(12 . "L")(13 . "M")(14 . "N")(15 . "O")(16 . "P")(17 . "Q")(18 . "R")(19 . "S")(20 . "T")(21 . "U")(22 . "V")(23 . "W")(24 . "X")(25 . "Y")(26 . "Z")(27 . "AA")(28 . "AB")(29 . "AC")(30 . "AD")(31 . "AE")(32 . "AF")))
 
 
 (define (make-scatter-plot outfile response metric threshold nrows num-hits data-body )
