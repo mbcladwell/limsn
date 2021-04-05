@@ -386,7 +386,7 @@ $Data <<EOD
 1	16	1	A	0x000000	0x000000	0x000000
 EOD
 set terminal pngcairo size 600,350
-set output 'pub/tmp/lyt-1562457325090311990834.png'
+set output 'pub/tmp/lyt-2238536839130715598117.png'
 set key box outs vert right center
 set xrange [0:25]
 set yrange [0:17]

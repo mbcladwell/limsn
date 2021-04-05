@@ -4,7 +4,7 @@
 <@include header.tpl %>
 
   <div class="container">
-  <h2>Plate Layouts for Source LYT-<%= id %></h2>
+  <h2>Plate Layouts for Source LYT-<%= lytid %></h2>
 <table id="lyttable" class="display table table-striped table-bordered"><thead><tr><th>ID</th><th>Name</th><th>Description</th><th>Format</th><th>Sample N</th><th>Target N</th><th>Edge?</th><th>N Controls</th><th>Unk N</th><th>Location</th><th>src/dest</th></tr></thead>
 
  <tbody> <%= body %></tbody>

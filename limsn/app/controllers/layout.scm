@@ -172,15 +172,42 @@
     (count what (cdr list) counter))
    (else #f)))
 
+(define (process-lyt-row r format well-nums)
+  (let* (
+	 (row (stripfix (car r)))
+	 (by-col (car  (string-split row  #\tab)))
+	 (type (cadr  (string-split row  #\tab)))
+	 (key (cons 'by_col  (string->number by-col)))
+	;;  (well-num-row (assoc key well-nums))
+	;;  (col (assoc-ref well-num-row 'col))
+	 
+	;;  (row-num (assoc-ref well-num-row 'row_num))
+	;;  (rev-row (cond ((equal? format "96")  (assq-ref ns-lst  row-num))
+	;; 		((equal? format "384") (assq-ref tef-lst row-num))
+	;; 		((equal? format "1536") (assq-ref fts-lst  row-num))
+	;; 		))
+	;;  (y-tic-label (cond ((equal? format "96")  (assq-ref get-96-row-labels  row-num))
+	;; 		    ((equal? format "384") (assq-ref get-384-row-labels row-num))
+	;; 		    ((equal? format "1536") (assq-ref get-1536-row-labels row-num))
+	;; 		    ))
+	;; (color  (assq-ref get-spl-color type))	 
+	 )
+    (string-append by-col "\t" row "\t" type)))
+
 
 (post "/viewlayout"   #:from-post 'qstr
+      #:cookies '(names prjid userid sid)
+      #:conn #t
       ;; view a layout before import
    (lambda (rc)
      (let* ((help-topic "layouts")
-	    (infile (get-rand-file-name "lyt" "txt")) ;;do not incorporate the "pub" here because the html
+	    (prjid (:cookies-value rc "prjid"))
+	    (sid (:cookies-value rc "sid"))
+
+	   ;; (infile (get-rand-file-name "lyt" "txt")) ;;do not incorporate the "pub" here because the html
 	    (spl-out  (get-rand-file-name "lyt" "png")) ;; does not want the pub
-	    (spl-out2 (string-append "\"" spl-out "\""))
-	    (cookies  (rc-cookie rc))
+	   ; (spl-out2 (string-append "\"" spl-out "\""))
+	   ;; (cookies  (rc-cookie rc))
 	    (a (uri-decode (:from-post rc 'get-vals "datatransfer")))
 	    (b (map list (cdr (string-split a #\newline))))
 	    (holder (get-types b '()))
@@ -192,12 +219,68 @@
 	    (nedge (count "5" all-types 0))
 	    (ncontrols (+ n2 n3 n4))
 	    (format (:from-post rc 'get-vals "format2"))
-	    (file-port (open-output-file (string-append "pub/" infile)))
-	    (dummy (display a file-port))
-	    (dummy2 (force-output file-port))
-	    (dummy (system (string-append "Rscript --vanilla rscripts/plot-review-layout.R pub/" infile " pub/" spl-out " " format ))))
-    (view-render "viewlayout" (the-environment))
+
+	   ;; (file-port (open-output-file (string-append "pub/" infile)))
+	   ;; (dummy (display a file-port))
+	   ;; (dummy2 (force-output file-port))
+	   ;; (dummy (system (string-append "Rscript --vanilla rscripts/plot-review-layout.R pub/" infile " pub/" spl-out " " format )))
+
+	     (sqlsuffix (prep-sql-suffix  b "")) ;;last element is empty
+	    ;; (sqlprefix "INSERT INTO import_plate_layout (well_by_col, well_type_id, replicates, target) VALUES ")
+	    ;; (sql (string-append sqlprefix sqlsuffix))
+	    ;; (dummy (:conn rc sql))
+
+	    (sql (string-append "select  by_col, col, row_num  FROM well_numbers where well_numbers.plate_format=" format))
+	    ;; (well-nums (DB-get-all-rows(:conn rc sql) ))
+	    ;; (row-pre (car b))
+	    ;; (row (stripfix (caar b)))
+	    ;; (by-col (car  (string-split row  #\tab)))
+	    ;; (type (cadr  (string-split row  #\tab)))
+	    ;; (key (cons 'by_col  (string->number by-col)))
+	    ;; (well-num-row (assoc key well-nums))
+	    ;; (col (assoc-ref well-num-row 'col))
+
+;;	    (data-body (map process-lyt-row b (circular-list format) (circular-list well-nums)))
+;;	    (data-body (string-concatenate (prep-lyt-for-g holder format)))
+;;	    (dummy (make-layout-plot spl-out data-body format))
+
+
+	    )
+;;    (view-render "viewlayout" (the-environment))
+    (view-render "test" (the-environment))
    )))
+
+
+(define (make-layout-preview-plot spl-out data-body format)
+;; Threshold  called metric below x,y are coordinates for printing
+  ;; outfile: .png filename
+  ;; nrows number of data points to plot
+  ;; num-hits given the threshold
+  ;; threshold must be a number
+  (let* ((xmax (cond ((equal? format "96")  "13")
+		     ((equal? format "384") "25")
+		     ((equal? format "1536") "49")
+		     ))	 
+	 (ymax (cond ((equal? format "96")  "9")
+		     ((equal? format "384") "17")
+		     ((equal? format "1536") "33")
+		     ))
+	 (ptsize (cond ((equal? format "96")  "3")
+		     ((equal? format "384") "2")
+		     ((equal? format "1536") "1")
+		     ))	 
+	 (gplot-script   (string-append "reset session\n$Data <<EOD\n" data-body "EOD\nset terminal pngcairo size 600,350\nset output 'pub/" spl-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:5:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\", NaN with points pt 20  lc rgb 0x33FFFF title \"edge\"\n"))
+;;	 (p  (open-output-file (get-rand-file-name "script" "txt")))
+    	 
+	 (port (open-output-pipe "gnuplot"))
+	 )
+    (begin
+      (display gplot-script port)
+      (close-pipe port))
+   ;; (begin
+     ;; (put-string p gplot-script )
+     ;; (force-output p))   
+    )) 
 
 
 
@@ -205,10 +288,10 @@
   ;;input is (88\t90\r)
   (cond
    ((null? (cdr list))
-    (set! sqlsuffix (string-append sqlsuffix "(" (string-trim-both (caar list) cs) ", " (string-trim-both  (cadar list) cs)  ", 1, 1) "))
+    ;;(set! sqlsuffix (string-append sqlsuffix "(" (string-trim-both (caar list) cs) ", " (string-trim-both  (cadar list) cs)  ", 1, 1) ")) 
     sqlsuffix)
    ((cdr list)
-    (set! sqlsuffix (string-append sqlsuffix "(" (string-trim-both  (caar list) cs) ", " (string-trim-both  (cadar list) cs)  ", 1, 1), "))
+    (set! sqlsuffix (string-append sqlsuffix "(" (string-trim-both  (caar list) cs) ", " (string-trim-both  (cadar list) cs)  ", 1, 1), ")) 
     (prep-sql-suffix (cdr list) sqlsuffix))
    (else #f)))
 
@@ -286,9 +369,9 @@
 				((equal? format "1536") (assq-ref fts-lst (string->number row-num)))
 				))
 		 (col (result-ref x "col"))
-		 (y-tic-label (cond ((equal? format "96")  (assq-ref get-96-row-labels row-num))
-				    ((equal? format "384") (assq-ref get-384-row-labels row-num))
-				    ((equal? format "1536") (assq-ref get-1536-row-labels row-num))
+		 (y-tic-label (cond ((equal? format "96")  (assq-ref get-96-row-labels (string->number row-num)))
+				    ((equal? format "384") (assq-ref get-384-row-labels (string->number row-num)))
+				    ((equal? format "1536") (assq-ref get-1536-row-labels (string->number row-num)))
 				))
 		 
 		 (type (cond ((equal? (get-c3 x ) "1") "0x000000")
@@ -297,15 +380,13 @@
 			     ((equal? (get-c3 x ) "4") "0x969696")			     
 			     ((equal? (get-c3 x ) "5") "0x33FFFF")))
 		 (replicates (cond ((equal? (get-c4 x ) "1") "0x000000")
-			     ((equal? (get-c4 x ) "2") "0x00ff00")
-			     ((equal? (get-c4 x ) "3") "0xff0000")
-			     ((equal? (get-c4 x ) "4") "0x969696")			     
-			     ((equal? (get-c4 x ) "5") "0x33FFFF")))
+			     ((equal? (get-c4 x ) "2") "0xFFFFFF")
+			     ((equal? (get-c4 x ) "3") "0x0000FF")
+			     ((equal? (get-c4 x ) "4") "0x33FFFF")))		         
 		 (target (cond ((equal? (get-c5 x ) "1") "0x000000")
-			     ((equal? (get-c5 x ) "2") "0x00ff00")
-			     ((equal? (get-c5 x ) "3") "0xff0000")
-			     ((equal? (get-c5 x ) "4") "0x969696")			     
-			     ((equal? (get-c5 x ) "5") "0x33FFFF")))
+			     ((equal? (get-c5 x ) "2") "0xFFFFFF")
+			     ((equal? (get-c5 x ) "3") "0x0000FF")
+			     ((equal? (get-c5 x ) "4") "0x33FFFF")))			     
 		 )
             (cons (string-append  row-num "\t" (number->string rev-row) "\t" col "\t" y-tic-label  "\t" type "\t" replicates "\t" target "\n")
 		  prev)))
@@ -314,32 +395,38 @@
 
 
 
-(define (make-layout-plot outfile data-body arid format)
+(define (make-layout-plot spl-out spl-rep-out trg-rep-out data-body arid format)
 ;; Threshold  called metric below x,y are coordinates for printing
   ;; outfile: .png filename
   ;; nrows number of data points to plot
   ;; num-hits given the threshold
   ;; threshold must be a number
-  (let* ((xmax (cond ((equal? format "96")  "97")
-		     ((equal? format "384") "384")
-		     ((equal? format "1536") "1537")
+  (let* ((xmax (cond ((equal? format "96")  "13")
+		     ((equal? format "384") "25")
+		     ((equal? format "1536") "49")
 		     ))	 
 	 (ymax (cond ((equal? format "96")  "9")
 		     ((equal? format "384") "17")
 		     ((equal? format "1536") "33")
-		     ))	 
-	 (gplot-script   (string-append "reset session\n$Data <<EOD\n" data-body "EOD\nset terminal pngcairo size 600,350\nset output 'pub/" outfile "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:5:ytic(4) notitle with points ps 2 lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\", NaN with points pt 20  lc rgb 0x33FFFF title \"edge\""))
-	 (p  (open-output-file (get-rand-file-name "script" "txt")))
+		     ))
+	 (ptsize (cond ((equal? format "96")  "3")
+		     ((equal? format "384") "2")
+		     ((equal? format "1536") "1")
+		     ))
+	 
+	 (gplot-script   (string-append "reset session\n$Data <<EOD\n" data-body "EOD\nset terminal pngcairo size 600,350\nset output 'pub/" spl-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:5:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\", NaN with points pt 20  lc rgb 0x33FFFF title \"edge\"\nset output 'pub/" spl-rep-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:6:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb 0x000000 title \"rep1\", NaN with points pt 20 lc rgb 0xFFFFFF title \"rep2\", NaN with points pt 20 lc rgb 0x0000FF title \"rep3\", NaN with points pt 20  lc rgb 0x33FFFF title \"rep4\"\nset output 'pub/" trg-rep-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:7:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb 0x000000 title \"rep1\", NaN with points pt 20 lc rgb 0xFFFFFF title \"rep2\", NaN with points pt 20 lc rgb 0x0000FF title \"rep3\", NaN with points pt 20  lc rgb 0x33FFFF title \"rep4\""))
+;;	 (p  (open-output-file (get-rand-file-name "script" "txt")))
     	 
-;;	 (port (open-output-pipe "gnuplot"))
+	 (port (open-output-pipe "gnuplot"))
 	 )
-   ;; (begin
-     ;; (display gplot-script port)
-    ;;  (close-pipe port))
     (begin
-      (put-string p gplot-script )
-      (force-output p))   
+      (display gplot-script port)
+      (close-pipe port))
+   ;; (begin
+     ;; (put-string p gplot-script )
+     ;; (force-output p))   
     )) 
+
 
 
 
@@ -379,13 +466,13 @@
 			(sql (string-append "select  row_num, col, well_type_id, plate_layout.replicates, plate_layout.target from plate_layout_name, plate_layout, well_numbers where plate_layout.well_by_col=well_numbers.by_col and plate_layout.plate_layout_name_id = plate_layout_name.id and well_numbers.plate_format=plate_layout_name.plate_format_id AND plate_layout.plate_layout_name_id =" lytid))
 			(holder (DB-get-all-rows(:conn rc sql) ))
 			(data-body (string-concatenate (prep-lyt-for-g holder format)))
-			(dummy (make-layout-plot (get-rand-file-name "lyt" "png") data-body lytid format))
+			(dummy (make-layout-plot spl-out spl-rep-out trg-rep-out data-body lytid format))
 			
 		
 			 (spl-out2 (string-append "\"../" spl-out "\"" ))
 			 (spl-rep-out2 (string-append "\"../" spl-rep-out "\""))
 			 (trg-rep-out2  (string-append "\"../" trg-rep-out "\""))
 			)
-		;;   (view-render "lytbyid" (the-environment))
-		   (view-render "test" (the-environment))
+		   (view-render "lytbyid" (the-environment))
+		 ;;  (view-render "test" (the-environment))
 		   )))

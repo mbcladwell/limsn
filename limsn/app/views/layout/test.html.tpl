@@ -7,8 +7,11 @@
   <h1>Test</h1><br><br>
 
 
+<br><br>  <%= a %>
+<br><br>  <%= sqlsuffix %>
 
-<br><br>  <%= data-body %>
+
+
 
 
 
