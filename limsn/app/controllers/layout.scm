@@ -195,6 +195,61 @@
     (string-append by-col "\t" row "\t" type)))
 
 
+(define (prep-datatransfer lst well-nums results)
+  ;;input is (88\t90\r)
+  (cond
+   ((null? (cdr lst)) results)
+    ;; (let* ((by-col (car (string-split (string-trim-both (caar lst) cs) #\tab)))
+    ;; 	   (type (cadr (string-split (string-trim-both (caar lst) cs) #\tab)))
+    ;; 	   (well-num-row (get-roi (string->number by-col) well-nums))
+    ;; 	   (col (number->string (assoc-ref well-num-row 'col)))
+    ;; 	   (dummy (set! results (string-append results by-col "\t" type "\t" col "\n")))
+    ;; 	   )
+    ;;   results))
+   
+   ((cdr lst)
+    (let* ((by-col (car (string-split (string-trim-both (caar lst) cs) #\tab)))
+	   (type (cadr (string-split (string-trim-both (caar lst) cs) #\tab)))
+	   (well-num-row (get-roi (string->number by-col) well-nums))
+	   (col (number->string (assoc-ref well-num-row 'col)))
+	   (dummy (pretty-print (string-append "by-col: " by-col " type: " type)))
+	   (dummy (set! results (string-append results by-col "\t" type "\t" col "\n")))
+	   
+	   )
+      (prep-datatransfer (cdr lst) results)))
+   (else #f)))
+
+
+(define (get-roi key allrows)
+  ;;assume key is unique stop when found
+  (cond
+   ((null? (cdr allrows))
+   (if (eqv? key (cdaar allrows)) (car allrows) #f ))
+   
+   ((cdr allrows)
+    (if (eqv? key (cdaar allrows))
+	(car allrows)
+	(get-roi key (cdr allrows))))
+   ))
+   
+(define (filter-empty lst newlst)
+(cond
+ ((null? (cdr lst)) 
+  (if (null? (car lst)) (cdr newlst)
+      (begin
+	(set! newlst (cons (car lst) newlst))
+	(cdr  newlst))))
+  ((cdr lst)
+   (if (null? (car lst))
+       (filter-empty (cdr lst) newlst)
+       (begin
+	(set! newlst (cons (car lst) newlst))
+	(filter-empty (cdr lst) newlst)))
+   )))
+  
+  
+
+
 (post "/viewlayout"   #:from-post 'qstr
       #:cookies '(names prjid userid sid)
       #:conn #t
@@ -210,6 +265,7 @@
 	   ;; (cookies  (rc-cookie rc))
 	    (a (uri-decode (:from-post rc 'get-vals "datatransfer")))
 	    (b (map list (cdr (string-split a #\newline))))
+	    (c (filter-empty b '()))
 	    (holder (get-types b '()))
 	    (all-types (apply append holder))	   
 	    (nunks (count "1" all-types 0))
@@ -225,19 +281,23 @@
 	   ;; (dummy2 (force-output file-port))
 	   ;; (dummy (system (string-append "Rscript --vanilla rscripts/plot-review-layout.R pub/" infile " pub/" spl-out " " format )))
 
-	     (sqlsuffix (prep-sql-suffix  b "")) ;;last element is empty
 	    ;; (sqlprefix "INSERT INTO import_plate_layout (well_by_col, well_type_id, replicates, target) VALUES ")
 	    ;; (sql (string-append sqlprefix sqlsuffix))
 	    ;; (dummy (:conn rc sql))
 
 	    (sql (string-append "select  by_col, col, row_num  FROM well_numbers where well_numbers.plate_format=" format))
-	    ;; (well-nums (DB-get-all-rows(:conn rc sql) ))
+	    (well-nums (DB-get-all-rows(:conn rc sql) ))
+	    (by-col "1")
+	    (well-num-row (get-roi (string->number by-col) well-nums))
+	   (col2  (assoc-ref well-num-row 'col))
+	  
+;;	    (data-body (prep-datatransfer c well-nums ""))
 	    ;; (row-pre (car b))
 	    ;; (row (stripfix (caar b)))
-	    ;; (by-col (car  (string-split row  #\tab)))
+	 
 	    ;; (type (cadr  (string-split row  #\tab)))
-	    ;; (key (cons 'by_col  (string->number by-col)))
-	    ;; (well-num-row (assoc key well-nums))
+	;;     (key (cons 'by_col  (string->number "1")))
+	 ;;    (well-num-row (get-roi 1  well-nums))
 	    ;; (col (assoc-ref well-num-row 'col))
 
 ;;	    (data-body (map process-lyt-row b (circular-list format) (circular-list well-nums)))
@@ -288,10 +348,10 @@
   ;;input is (88\t90\r)
   (cond
    ((null? (cdr list))
-    ;;(set! sqlsuffix (string-append sqlsuffix "(" (string-trim-both (caar list) cs) ", " (string-trim-both  (cadar list) cs)  ", 1, 1) ")) 
+    (if (null? (car list)) #f (set! sqlsuffix (string-append sqlsuffix "(" (string-trim-both (caar list) cs) ", " (string-trim-both  (cadar list) cs)  ", 1, 1) "))) 
     sqlsuffix)
    ((cdr list)
-    (set! sqlsuffix (string-append sqlsuffix "(" (string-trim-both  (caar list) cs) ", " (string-trim-both  (cadar list) cs)  ", 1, 1), ")) 
+    (if (null? (car list)) #f (set! sqlsuffix (string-append sqlsuffix "(" (string-trim-both  (caar list) cs) ", " (string-trim-both  (cadar list) cs)  ", 1, 1), ")) )
     (prep-sql-suffix (cdr list) sqlsuffix))
    (else #f)))
 
