@@ -2,7 +2,6 @@
 *.go
 *.log
 *.pdf
-*.png
 *.tar.xz
 *.tar.gz
 *.tmp
