@@ -5,6 +5,8 @@
               ;; only for this file, not controllers/views
 )
  ;; Put whatever you want to be called before server initilization here
+ 
+;; (add-to-load-path "/home/mbc/projects/limsn")
 (add-to-load-path "/home/admin/limsn")
 
  (init-server)
