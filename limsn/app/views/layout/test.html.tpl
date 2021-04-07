@@ -8,9 +8,8 @@
 
 
 
-<br><br>  <%= c %>
-<br><br>  <%= well-num-row %>
-<br><br> <%= col2 %>
+<br><br> <%= data-body %>
+
 
 
 

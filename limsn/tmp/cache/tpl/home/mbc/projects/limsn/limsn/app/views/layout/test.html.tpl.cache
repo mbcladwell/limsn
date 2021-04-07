@@ -108,9 +108,8 @@
 
 
 
-<br><br>  ")(display  c )(display "
-<br><br>  ")(display  well-num-row )(display "
-<br><br> ")(display  col2 )(display "
+<br><br> ")(display  data-body )(display "
+
 
 
 

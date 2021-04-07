@@ -8,11 +8,15 @@
 	    get-384-row-labels
 	    get-1536-row-labels
 	    get-spl-color
+	    make-layout-plot
+	    make-layout-preview-plot
+	    prep-lyt-for-g
 	    ))
 
 (use-modules (artanis artanis)(artanis utils)(artanis config) (ice-9 local-eval) (srfi srfi-1)
              (artanis irregex)(dbi dbi) (ice-9 textual-ports)(ice-9 rdelim)(ice-9 popen)
-	     (rnrs bytevectors)(web uri))
+	     (rnrs bytevectors)(web uri)
+	     (labsolns artass))
 
 
 ;; used to reverse row labels for plotting
@@ -33,12 +37,19 @@
 (define get-1536-row-labels '( (1 . "A")(2 . ".")(3 . "C")(4 . ".")(5 . "E")(6 . ".")(7 . "G")(8 . ".")(9 . "I")(10 . ".")(11 . "K")(12 . ".")(13 . "M")(14 . ".")(15 . "O")(16 . ".")(17 . "Q")(18 . ".")(19 . "S")(20 . ".")(21 . "U")(22 . ".")(23 . "W")(24 . ".")(25 . "Y")(26 . ".")(27 . "AA")(28 . ".")(29 . "AC")(30 . ".")(31 . "AE")(32 . ".")))
 
 
-(define get-spl-color '((1 . 0x000000)   ;;unk black
-			(2 . 0x00ff00)   ;;pos green
-			(3 . 0xff0000)   ;;neg red 
-			(4 . 0x969696)   ;;blank grey
-			(5 . 0x33FFFF))) ;;edge light blue
+(define get-spl-color '((1 . "0x000000")   ;;unk black
+			(2 . "0x00ff00")   ;;pos green
+			(3 . "0xff0000")   ;;neg red 
+			(4 . "0x969696")   ;;blank grey
+			(5 . "0x33FFFF"))) ;;edge light blue
 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; SCATTER
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 (define (make-scatter-plot outfile response metric threshold nrows num-hits data-body )
@@ -94,3 +105,117 @@
 	 (str12 "\nplot '-' using 1:2:3 notitle with points pt 2 lc rgbcolor variable, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\"\n")
 	 (str13 "e"))   
    (string-append str1 (string-append "pub/" out-file) str2 threshold str3 xmax str4 threshold str5 ylabel str6  hit-num-text str7 hit-num-text-x str8 hit-num-text-y str9 metric-text str10 metric-text-x str11 metric-text-y str12 data str13 ) ))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; LAYOUT
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (prep-lyt-for-g a format)
+  ;; 1 'unknown' ? 0x000000  black
+  ;; 2 'positive' ? 0x00ff00  green
+  ;; 3 'negative' ? 0xff0000  red
+  ;; 4 'blank' ? 0x969696    grey
+  ;; 5 'edge'    0x33FFFF    lightblue
+
+  ;; rep1 0x000000  black
+  ;; rep2
+  ;; rep3
+  ;; rep4
+  (fold (lambda (x prev)
+          (let* ((row-num (get-c1 x))
+		 (rev-row (cond ((equal? format "96")  (assq-ref ns-lst (string->number row-num)))
+				((equal? format "384") (assq-ref tef-lst (string->number row-num)))
+				((equal? format "1536") (assq-ref fts-lst (string->number row-num)))
+				))
+		 (col (result-ref x "col"))
+		 (y-tic-label (cond ((equal? format "96")  (assq-ref get-96-row-labels (string->number row-num)))
+				    ((equal? format "384") (assq-ref get-384-row-labels (string->number row-num)))
+				    ((equal? format "1536") (assq-ref get-1536-row-labels (string->number row-num)))
+				))
+		 
+		 (type (cond ((equal? (get-c3 x ) "1") "0x000000")
+			     ((equal? (get-c3 x ) "2") "0x00ff00")
+			     ((equal? (get-c3 x ) "3") "0xff0000")
+			     ((equal? (get-c3 x ) "4") "0x969696")			     
+			     ((equal? (get-c3 x ) "5") "0x33FFFF")))
+		 (replicates (cond ((equal? (get-c4 x ) "1") "0x000000")
+			     ((equal? (get-c4 x ) "2") "0xFFFFFF")
+			     ((equal? (get-c4 x ) "3") "0x0000FF")
+			     ((equal? (get-c4 x ) "4") "0x33FFFF")))		         
+		 (target (cond ((equal? (get-c5 x ) "1") "0x000000")
+			     ((equal? (get-c5 x ) "2") "0xFFFFFF")
+			     ((equal? (get-c5 x ) "3") "0x0000FF")
+			     ((equal? (get-c5 x ) "4") "0x33FFFF")))			     
+		 )
+            (cons (string-append  row-num "\t" (number->string rev-row) "\t" col "\t" y-tic-label  "\t" type "\t" replicates "\t" target "\n")
+		  prev)))
+        '() a))
+
+
+
+(define (make-layout-plot spl-out spl-rep-out trg-rep-out data-body arid format)
+;; Threshold  called metric below x,y are coordinates for printing
+  ;; outfile: .png filename
+  ;; nrows number of data points to plot
+  ;; num-hits given the threshold
+  ;; threshold must be a number
+  (let* ((xmax (cond ((equal? format "96")  "13")
+		     ((equal? format "384") "25")
+		     ((equal? format "1536") "49")
+		     ))	 
+	 (ymax (cond ((equal? format "96")  "9")
+		     ((equal? format "384") "17")
+		     ((equal? format "1536") "33")
+		     ))
+	 (ptsize (cond ((equal? format "96")  "3")
+		     ((equal? format "384") "2")
+		     ((equal? format "1536") "1")
+		     ))
+	 
+	 (gplot-script   (string-append "reset session\n$Data <<EOD\n" data-body "EOD\nset terminal pngcairo size 600,350\nset output 'pub/" spl-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:5:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\", NaN with points pt 20  lc rgb 0x33FFFF title \"edge\"\nset output 'pub/" spl-rep-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:6:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb 0x000000 title \"rep1\", NaN with points pt 20 lc rgb 0xFFFFFF title \"rep2\", NaN with points pt 20 lc rgb 0x0000FF title \"rep3\", NaN with points pt 20  lc rgb 0x33FFFF title \"rep4\"\nset output 'pub/" trg-rep-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:7:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb 0x000000 title \"rep1\", NaN with points pt 20 lc rgb 0xFFFFFF title \"rep2\", NaN with points pt 20 lc rgb 0x0000FF title \"rep3\", NaN with points pt 20  lc rgb 0x33FFFF title \"rep4\""))
+;;	 (p  (open-output-file (get-rand-file-name "script" "txt")))
+    	 
+	 (port (open-output-pipe "gnuplot"))
+	 )
+    (begin
+      (display gplot-script port)
+      (close-pipe port))
+   ;; (begin
+     ;; (put-string p gplot-script )
+     ;; (force-output p))   
+    )) 
+
+(define (make-layout-preview-plot spl-out data-body format)
+;; Threshold  called metric below x,y are coordinates for printing
+  ;; outfile: .png filename
+  ;; nrows number of data points to plot
+  ;; num-hits given the threshold
+  ;; threshold must be a number
+  (let* ((xmax (cond ((equal? format "96")  "13")
+		     ((equal? format "384") "25")
+		     ((equal? format "1536") "49")
+		     ))	 
+	 (ymax (cond ((equal? format "96")  "9")
+		     ((equal? format "384") "17")
+		     ((equal? format "1536") "33")
+		     ))
+	 (ptsize (cond ((equal? format "96")  "3")
+		     ((equal? format "384") "2")
+		     ((equal? format "1536") "1")
+		     ))	 
+	 (gplot-script   (string-append "reset session\n$Data <<EOD\n" data-body "EOD\nset terminal pngcairo size 600,350\nset output 'pub/" spl-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 1:2:4:ytic(3) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\", NaN with points pt 20  lc rgb 0x33FFFF title \"edge\"\n"))
+;;	 (p  (open-output-file (get-rand-file-name "script" "txt")))
+	 
+	 (port (open-output-pipe "gnuplot"))
+	 )
+    (begin
+      (display gplot-script port)
+      (close-pipe port))
+   ;; (begin
+     ;; (put-string p gplot-script )
+     ;; (force-output p))   
+    )) 
+

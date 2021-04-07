@@ -8,7 +8,9 @@
 
 (use-modules (artanis artanis)(artanis utils)(artanis irregex)	     
 	     (srfi srfi-1)(dbi dbi) (labsolns artass)(labsolns gplot)(ice-9 popen)
-	      (ice-9 textual-ports)(ice-9 rdelim)(rnrs bytevectors)(web uri)(ice-9 pretty-print))
+	     (ice-9 textual-ports)(ice-9 rdelim)(rnrs bytevectors)(web uri)(ice-9 pretty-print)
+	     (oop goops) ;;class-of
+	     )
 
 (define (prep-lyt-rows a)
   (fold (lambda (x prev)
@@ -195,28 +197,45 @@
     (string-append by-col "\t" row "\t" type)))
 
 
-(define (prep-datatransfer lst well-nums results)
+(define (prep-datatransfer lst well-nums format results)
   ;;input is (88\t90\r)
   (cond
-   ((null? (cdr lst)) results)
-    ;; (let* ((by-col (car (string-split (string-trim-both (caar lst) cs) #\tab)))
-    ;; 	   (type (cadr (string-split (string-trim-both (caar lst) cs) #\tab)))
-    ;; 	   (well-num-row (get-roi (string->number by-col) well-nums))
-    ;; 	   (col (number->string (assoc-ref well-num-row 'col)))
-    ;; 	   (dummy (set! results (string-append results by-col "\t" type "\t" col "\n")))
-    ;; 	   )
-    ;;   results))
-   
+   ((null? (cdr lst))
+    (let* ((by-col (car (string-split (string-trim-both (caar lst) cs) #\tab)))
+	   (type (string->number (cadr (string-split (string-trim-both (caar lst) cs) #\tab))))
+	   (well-num-row (get-roi (string->number by-col) well-nums))
+	   (col  (cdadr well-num-row))
+	   (row (cdaddr well-num-row))
+	   (rev-row (cond ((equal? format "96") (assoc-ref ns-lst row))
+		     ((equal? format "384") (assoc-ref tef-lst row))
+		     ((equal? format "1536") (assoc-ref fts-lst row))
+		     ))
+	   (label (cond ((equal? format "96") (assoc-ref get-96-row-labels row))
+		     ((equal? format "384") (assoc-ref  get-384-row-labels row))
+		     ((equal? format "1536") (assoc-ref  get-1536-row-labels row))
+		     ))
+	   (color (assoc-ref get-spl-color type))
+	   (dummy (set! results (string-append results col "\t" (number->string rev-row) "\t" label "\t"  color "\n")))	   
+	   )
+      results))  
    ((cdr lst)
     (let* ((by-col (car (string-split (string-trim-both (caar lst) cs) #\tab)))
-	   (type (cadr (string-split (string-trim-both (caar lst) cs) #\tab)))
+	   (type (string->number (cadr (string-split (string-trim-both (caar lst) cs) #\tab))))
 	   (well-num-row (get-roi (string->number by-col) well-nums))
-	   (col (number->string (assoc-ref well-num-row 'col)))
-	   (dummy (pretty-print (string-append "by-col: " by-col " type: " type)))
-	   (dummy (set! results (string-append results by-col "\t" type "\t" col "\n")))
-	   
+	   (col  (cdadr well-num-row))
+	   (row (cdaddr well-num-row))
+	   (rev-row (cond ((equal? format "96") (assoc-ref ns-lst row))
+		     ((equal? format "384") (assoc-ref tef-lst row))
+		     ((equal? format "1536") (assoc-ref fts-lst row))
+		     ))
+	   (label (cond ((equal? format "96") (assoc-ref get-96-row-labels row))
+		     ((equal? format "384") (assoc-ref  get-384-row-labels row))
+		     ((equal? format "1536") (assoc-ref  get-1536-row-labels row))
+		     ))
+	   (color (assoc-ref get-spl-color type))
+	   (dummy (set! results (string-append results col "\t" (number->string rev-row) "\t" label "\t" color "\n")))	   
 	   )
-      (prep-datatransfer (cdr lst) results)))
+      (prep-datatransfer (cdr lst) well-nums format results)))
    (else #f)))
 
 
@@ -259,8 +278,8 @@
 	    (prjid (:cookies-value rc "prjid"))
 	    (sid (:cookies-value rc "sid"))
 
-	   ;; (infile (get-rand-file-name "lyt" "txt")) ;;do not incorporate the "pub" here because the html
-	    (spl-out  (get-rand-file-name "lyt" "png")) ;; does not want the pub
+	    (infile (get-rand-file-name "lyt" "txt")) ;;do not incorporate the "pub" here because the html
+	   (spl-out  (get-rand-file-name "lyt" "png")) ;; does not want the pub
 	   ; (spl-out2 (string-append "\"" spl-out "\""))
 	   ;; (cookies  (rc-cookie rc))
 	    (a (uri-decode (:from-post rc 'get-vals "datatransfer")))
@@ -276,9 +295,9 @@
 	    (ncontrols (+ n2 n3 n4))
 	    (format (:from-post rc 'get-vals "format2"))
 
-	   ;; (file-port (open-output-file (string-append "pub/" infile)))
-	   ;; (dummy (display a file-port))
-	   ;; (dummy2 (force-output file-port))
+	    (file-port (open-output-file (string-append "pub/" infile)))
+	    (dummy (display a file-port))
+	    (dummy2 (force-output file-port))
 	   ;; (dummy (system (string-append "Rscript --vanilla rscripts/plot-review-layout.R pub/" infile " pub/" spl-out " " format )))
 
 	    ;; (sqlprefix "INSERT INTO import_plate_layout (well_by_col, well_type_id, replicates, target) VALUES ")
@@ -286,61 +305,18 @@
 	    ;; (dummy (:conn rc sql))
 
 	    (sql (string-append "select  by_col, col, row_num  FROM well_numbers where well_numbers.plate_format=" format))
-	    (well-nums (DB-get-all-rows(:conn rc sql) ))
-	    (by-col "1")
-	    (well-num-row (get-roi (string->number by-col) well-nums))
-	   (col2  (assoc-ref well-num-row 'col))
-	  
-;;	    (data-body (prep-datatransfer c well-nums ""))
-	    ;; (row-pre (car b))
-	    ;; (row (stripfix (caar b)))
-	 
-	    ;; (type (cadr  (string-split row  #\tab)))
-	;;     (key (cons 'by_col  (string->number "1")))
-	 ;;    (well-num-row (get-roi 1  well-nums))
-	    ;; (col (assoc-ref well-num-row 'col))
+	    (well-nums (DB-get-all-rows(:conn rc sql) ))	    	  
+	    (data-body (prep-datatransfer c well-nums format ""))
 
-;;	    (data-body (map process-lyt-row b (circular-list format) (circular-list well-nums)))
-;;	    (data-body (string-concatenate (prep-lyt-for-g holder format)))
-;;	    (dummy (make-layout-plot spl-out data-body format))
+	    (dummy (make-layout-preview-plot spl-out data-body format))
 
+	    (spl-out2 (string-append "\"../" spl-out "\"" ))
 
 	    )
-;;    (view-render "viewlayout" (the-environment))
-    (view-render "test" (the-environment))
+    (view-render "viewlayout" (the-environment))
+;;    (view-render "test" (the-environment))
    )))
 
-
-(define (make-layout-preview-plot spl-out data-body format)
-;; Threshold  called metric below x,y are coordinates for printing
-  ;; outfile: .png filename
-  ;; nrows number of data points to plot
-  ;; num-hits given the threshold
-  ;; threshold must be a number
-  (let* ((xmax (cond ((equal? format "96")  "13")
-		     ((equal? format "384") "25")
-		     ((equal? format "1536") "49")
-		     ))	 
-	 (ymax (cond ((equal? format "96")  "9")
-		     ((equal? format "384") "17")
-		     ((equal? format "1536") "33")
-		     ))
-	 (ptsize (cond ((equal? format "96")  "3")
-		     ((equal? format "384") "2")
-		     ((equal? format "1536") "1")
-		     ))	 
-	 (gplot-script   (string-append "reset session\n$Data <<EOD\n" data-body "EOD\nset terminal pngcairo size 600,350\nset output 'pub/" spl-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:5:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\", NaN with points pt 20  lc rgb 0x33FFFF title \"edge\"\n"))
-;;	 (p  (open-output-file (get-rand-file-name "script" "txt")))
-    	 
-	 (port (open-output-pipe "gnuplot"))
-	 )
-    (begin
-      (display gplot-script port)
-      (close-pipe port))
-   ;; (begin
-     ;; (put-string p gplot-script )
-     ;; (force-output p))   
-    )) 
 
 
 
@@ -411,81 +387,6 @@
 ;; 	       ))
 
 
-(define (prep-lyt-for-g a format)
-  ;; 1 'unknown' ? 0x000000  black
-  ;; 2 'positive' ? 0x00ff00  green
-  ;; 3 'negative' ? 0xff0000  red
-  ;; 4 'blank' ? 0x969696    grey
-  ;; 5 'edge'    0x33FFFF    lightblue
-
-  ;; rep1 0x000000  black
-  ;; rep2
-  ;; rep3
-  ;; rep4
-  (fold (lambda (x prev)
-          (let* ((row-num (get-c1 x))
-		 (rev-row (cond ((equal? format "96")  (assq-ref ns-lst (string->number row-num)))
-				((equal? format "384") (assq-ref tef-lst (string->number row-num)))
-				((equal? format "1536") (assq-ref fts-lst (string->number row-num)))
-				))
-		 (col (result-ref x "col"))
-		 (y-tic-label (cond ((equal? format "96")  (assq-ref get-96-row-labels (string->number row-num)))
-				    ((equal? format "384") (assq-ref get-384-row-labels (string->number row-num)))
-				    ((equal? format "1536") (assq-ref get-1536-row-labels (string->number row-num)))
-				))
-		 
-		 (type (cond ((equal? (get-c3 x ) "1") "0x000000")
-			     ((equal? (get-c3 x ) "2") "0x00ff00")
-			     ((equal? (get-c3 x ) "3") "0xff0000")
-			     ((equal? (get-c3 x ) "4") "0x969696")			     
-			     ((equal? (get-c3 x ) "5") "0x33FFFF")))
-		 (replicates (cond ((equal? (get-c4 x ) "1") "0x000000")
-			     ((equal? (get-c4 x ) "2") "0xFFFFFF")
-			     ((equal? (get-c4 x ) "3") "0x0000FF")
-			     ((equal? (get-c4 x ) "4") "0x33FFFF")))		         
-		 (target (cond ((equal? (get-c5 x ) "1") "0x000000")
-			     ((equal? (get-c5 x ) "2") "0xFFFFFF")
-			     ((equal? (get-c5 x ) "3") "0x0000FF")
-			     ((equal? (get-c5 x ) "4") "0x33FFFF")))			     
-		 )
-            (cons (string-append  row-num "\t" (number->string rev-row) "\t" col "\t" y-tic-label  "\t" type "\t" replicates "\t" target "\n")
-		  prev)))
-        '() a))
-
-
-
-
-(define (make-layout-plot spl-out spl-rep-out trg-rep-out data-body arid format)
-;; Threshold  called metric below x,y are coordinates for printing
-  ;; outfile: .png filename
-  ;; nrows number of data points to plot
-  ;; num-hits given the threshold
-  ;; threshold must be a number
-  (let* ((xmax (cond ((equal? format "96")  "13")
-		     ((equal? format "384") "25")
-		     ((equal? format "1536") "49")
-		     ))	 
-	 (ymax (cond ((equal? format "96")  "9")
-		     ((equal? format "384") "17")
-		     ((equal? format "1536") "33")
-		     ))
-	 (ptsize (cond ((equal? format "96")  "3")
-		     ((equal? format "384") "2")
-		     ((equal? format "1536") "1")
-		     ))
-	 
-	 (gplot-script   (string-append "reset session\n$Data <<EOD\n" data-body "EOD\nset terminal pngcairo size 600,350\nset output 'pub/" spl-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:5:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\", NaN with points pt 20  lc rgb 0x33FFFF title \"edge\"\nset output 'pub/" spl-rep-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:6:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb 0x000000 title \"rep1\", NaN with points pt 20 lc rgb 0xFFFFFF title \"rep2\", NaN with points pt 20 lc rgb 0x0000FF title \"rep3\", NaN with points pt 20  lc rgb 0x33FFFF title \"rep4\"\nset output 'pub/" trg-rep-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:7:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb 0x000000 title \"rep1\", NaN with points pt 20 lc rgb 0xFFFFFF title \"rep2\", NaN with points pt 20 lc rgb 0x0000FF title \"rep3\", NaN with points pt 20  lc rgb 0x33FFFF title \"rep4\""))
-;;	 (p  (open-output-file (get-rand-file-name "script" "txt")))
-    	 
-	 (port (open-output-pipe "gnuplot"))
-	 )
-    (begin
-      (display gplot-script port)
-      (close-pipe port))
-   ;; (begin
-     ;; (put-string p gplot-script )
-     ;; (force-output p))   
-    )) 
 
 
 

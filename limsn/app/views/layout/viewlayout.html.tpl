@@ -39,10 +39,10 @@
 	  <label for="format">Format:&nbsp <%= format %></label>
 
 	</div>
-	</div>
+      </div>
 
- <input type="hidden" id="infile" name="infile" value=<%= infile %>>
- <input type="hidden" id="format" name="format" value=<%= format %>>
+      <input type="hidden" id="infile" name="infile" value=<%= infile %>>
+      <input type="hidden" id="format" name="format" value=<%= format %>>
  <input type="hidden" id="nunks" name="nunks" value=<%= nunks %>>
  <input type="hidden" id="ncontrols" name="ncontrols" value=<%= ncontrols %>>
  <input type="hidden" id="nedge" name="nedge" value=<%= nedge %>>

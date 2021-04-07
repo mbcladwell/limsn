@@ -1,9 +1,6 @@
 (display "<!-- project#add view template of lnserver
           Please add your license header here.
-          This file is generated automatically by GNU Artanis.
-          
-          
-           -->
+          This file is generated automatically by GNU Artanis. -->
   
 ")(display "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">
 <html lang=\"en\">
@@ -107,73 +104,16 @@
 
 ")(display "
 <div class=\"container\">
-  <h1>Preview/Import Layout</h1>
+  <h1>Registration</h1><br><br>
+
+Registration <label style=\"color:red\">failed</label>.<br>
+Customer id and license key do not match.<br><br>
+
+Customer ID:&nbsp;")(display  cust-id )(display "<br><br> 
+License key:&nbsp;")(display  cust-key )(display "<br><br> 
+Email:&nbsp;")(display  email )(display "<br><br> 
   
-  <p><h3>Sample Layout</h3></p>
- 
-  <image src= ")(display  spl-out2 )(display ">
-    
-    <form action=\"updatedb\" method=\"POST\">
-      <div class=\"form-row\">
-	<div class=\"form-group col-md-6\">
-	  <label for=\"lytname\">Layout Name</label>
-	  <input type=\"text\" class=\"form-control\" id=\"lytname\" name=\"lytname\" placeholder=\"Enter layout name\">
-	</div>
-	<div class=\"form-group col-md-6\">
-	  <label for=\"descr\">Description</label>
-	  <input type=\"text\" class=\"form-control\" id=\"descr\" name=\"descr\" value=\"1S1T\">
-	</div>
-      </div>
-
-      <div class=\"form-row\">
-	<div class=\"form-group col-md-6\">
-	  <label for=\"contloc\">Control Location</label>
-	  <input type=\"text\" class=\"form-control\" id=\"contloc\" name=\"contloc\" placeholder=\"Enter controls location\">
-	</div>
-      </div>
-      <div class=\"form-row\">
-	<div class=\"form-group col-md-12\">
-	  <label for=\"numunk\">Number unknowns:&nbsp")(display  nunks )(display "</label>&nbsp&nbsp&nbsp
-	  <label for=\"numcon\">Number controls:&nbsp")(display  ncontrols )(display "</label>&nbsp&nbsp&nbsp
-	  <label for=\"numcon\">Number edge:&nbsp")(display  nedge )(display "</label>&nbsp&nbsp&nbsp
-	  <label for=\"format\">Format:&nbsp ")(display  format )(display "</label>
-
-	</div>
-      </div>
-
-      <input type=\"hidden\" id=\"infile\" name=\"infile\" value=")(display  infile )(display ">
-      <input type=\"hidden\" id=\"format\" name=\"format\" value=")(display  format )(display ">
- <input type=\"hidden\" id=\"nunks\" name=\"nunks\" value=")(display  nunks )(display ">
- <input type=\"hidden\" id=\"ncontrols\" name=\"ncontrols\" value=")(display  ncontrols )(display ">
- <input type=\"hidden\" id=\"nedge\" name=\"nedge\" value=")(display  nedge )(display ">
-
-      
- <input  class=\"btn btn-primary\" id=\"importButton\" name=\"importButton\" type=\"submit\" value=\"Import Layout\" onclick=\"myFunction()\" >
-
-</form> 
-
- <button class=\"btn btn-primary\" type=\"button\" id=\"loadingButton\" name=\"loadingButton\" enabled>
-  <span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\" ></span>
-  Loading...
-</button>
-
-
-    
-</div>
-
-<script>
-  document.getElementById(\"importButton\").style.display = \"inline\";
-  document.getElementById(\"loadingButton\").style.display = \"none\";
-  
-  function myFunction() {
-      var x = document.getElementById(\"importButton\");
-      x.style.display = \"none\";
-      var y = document.getElementById(\"loadingButton\");
-      y.style.display = \"inline\";
-} 
-    </script>
-
-
+  </div>
 ")(display "</div>
 </div>
 
