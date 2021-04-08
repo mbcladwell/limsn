@@ -59,54 +59,6 @@ row_num | col | well_type_id | replicates | target
 
 
 
-(define get-96-row-labels '( (1 . "A")(2 . “B”)(3 . "")(4 . “D”)(5 . “E”)(6 . “F”)(7 . “G”)(8 . “H”)))
-
-(assq-ref get-96-row-labels 3)
-
-(define input "well	type
-1	5
-2	5
-3	5
-4	5
-5	5
-6	5
-7	5
-8	5
-9	5
-10	5
-11	5
-12	5
-13	5
-14	5
-15	5
-16	5
-17	5
-18	1
-19	1
-20	1
-21	1
-22	1")
-
-(define b  (cdr (string-split input #\newline)))
-
-
-
-
-
-
-
-
-(define (get-roi key allrows)
-  ;;assume key is unique stop when found
-  (cond
-   ((null? (cdr allrows))
-   (if (equal? key (cdaar allrows)) (car allrows) #f ))
-   
-   ((cdr allrows)
-    (if (equal? key (cdaar allrows))
-	 (car allrows)
-	(get-roi key (cdr allrows))))
-   ))
 
 
 
