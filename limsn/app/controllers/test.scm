@@ -5,9 +5,11 @@
 (use-modules (labsolns artass))
 
 (test-define page1
+	     (options #:session #t
+		       #:cookies '(names prjid sid ))
 	     (lambda (rc)
 	       (let* (
-		      (result (get-redirect-uri "dest"))
+		      (result (:cookies-getattr rc 'sid #:expir))
 		      )
    (view-render "page1" (the-environment)))
   ))

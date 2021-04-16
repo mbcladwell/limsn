@@ -55,8 +55,9 @@
 	 (if (:session rc 'check)
 	     (let* (
 		    (dest  (uri-decode (:from-post rc 'get-vals "destination")))
-		    ;; (dest (params rc "destination"))
-		    (requested-url  (if dest dest  "/project/getall")))
+		    (requested-url  (if dest dest  "/project/getall"))
+		     (dummy (:cookies-set! rc 'prjid "prjid" "1"))
+		    )
 	       (redirect-to rc  (get-redirect-uri requested-url)))
 	     ;; requested url, sid, userid must be available at top level
 	     (let* ((sid (:auth rc))		    
