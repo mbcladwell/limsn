@@ -8,16 +8,22 @@
 	     (options #:session #t
 		       #:cookies '(names prjid sid ))
 	     (lambda (rc)
-	       (let* (
-		      (result (:cookies-getattr rc 'sid #:expir))
+	       (let* ((server-check (:session rc 'check))
+		      (client-check (:cookies-value rc "sid"))
+		     
+		     
 		      )
    (view-render "page1" (the-environment)))
   ))
 
 (post "/test/page1action"
-		 (lambda (rc)
-		     (redirect-to rc  (get-redirect-uri "/test/page2"))
-		     ))
+      (lambda (rc)
+	(let* (
+	       (dummy (:cookies-set! rc 'prjid "prjid" "1"))
+	      	   
+		   )   
+	  (redirect-to rc  (get-redirect-uri "/test/page2"))	   
+		     )))
 
 ;; (post "/test/page1action"
 ;; 		 (lambda (rc)
