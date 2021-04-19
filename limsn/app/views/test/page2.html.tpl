@@ -5,7 +5,7 @@
 <html><body>
     <h1>Page 2</h1>
     server: <%= server-check  %><br>
-    client: <%= client-check  %><br>
+    client: <%= sid  %><br>
     prjid: <%= prjid-check  %><br>
 
 </body></html>

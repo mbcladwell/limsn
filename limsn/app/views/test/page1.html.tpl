@@ -6,8 +6,8 @@
     <h1>Page 1</h1>
 
     server: <%= server-check  %><br>
-    client: <%= client-check  %><br>
-    server: <%= prjid-check  %><br>
+    client: <%= sid  %><br>
+    prjid: <%= prjid-check  %><br>
     
 <form action="/test/page1action" method="POST">
 <input type="submit" value="Send Request">

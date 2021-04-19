@@ -36,7 +36,7 @@
 (test-define page2
 	       (lambda (rc)
 	       (let* ((server-check (:session rc 'check))
-		      (client-check (:cookies-value rc "sid"))
+		      (sid (:cookies-value rc "sid"))
 		      (prjid-check (:cookies-value rc "prjid"))
 		      )
    (view-render "page2" (the-environment))
