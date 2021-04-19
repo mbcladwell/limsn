@@ -6,6 +6,6 @@
     <h1>Page 2</h1>
     server: <%= server-check  %><br>
     client: <%= client-check  %><br>
-    server: <%= prjid-check  %><br>
+    prjid: <%= prjid-check  %><br>
 
 </body></html>
