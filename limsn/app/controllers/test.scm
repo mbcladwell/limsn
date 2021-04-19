@@ -36,6 +36,8 @@
 ;; 		     ))
 
 (test-define page2
+	     (options  #:session #t
+		       #:cookies '(names prjid sid ))
 	       (lambda (rc)
 	       (let* ((server-check (:session rc 'check))
 		      (sid (:cookies-value rc "sid"))
