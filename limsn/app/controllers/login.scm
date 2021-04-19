@@ -75,6 +75,7 @@
 					   )
 				      userid)
 				#f))
+		    (prjid "1")
 		    (requested-url (if sid (let* (
 						  (dest   (uri-decode (:from-post rc 'get-vals "destination")))				  	      
 						  )
