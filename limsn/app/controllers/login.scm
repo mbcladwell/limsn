@@ -4,14 +4,15 @@
 
 (define-artanis-controller login) ; DO NOT REMOVE THIS LINE!!!
 
-(use-modules (labsolns artass)(artanis cookie))
+;;(use-modules (labsolns artass)(artanis cookie))
 	     
 
-;;(use-modules (artanis artanis)(artanis utils)(artanis irregex)
-;;	     ((rnrs) #:select (define-record-type))	     
-;;	     (srfi srfi-1)(dbi dbi) 
-;;	     (ice-9 textual-ports)(ice-9 rdelim)(rnrs bytevectors)
-;;	     (web uri)(ice-9 pretty-print))
+(use-modules (artanis artanis)(artanis utils)(artanis irregex)
+	     ((rnrs) #:select (define-record-type))
+	     (labsolns artass)(artanis cookie)
+	     (srfi srfi-1)(dbi dbi) 
+	     (ice-9 textual-ports)(ice-9 rdelim)(rnrs bytevectors)
+	     (web uri)(ice-9 pretty-print))
 
 (get "/login"
       #:cookies '(names prjid sid )
@@ -38,12 +39,6 @@
 	   (get-id-for-name name (cdr rows)))))
 
 
-;; (define (get-group-for-name name rows)
-;;   (if (and  (null? (cdr rows))  (string=?   (cdadar rows) name))
-;;        (cdr (caddar rows))
-;;       (if (string=?   (cdadar rows) name)
-;; 	   (cdr (caddar rows))
-;; 	   (get-group-for-name name (cdr rows)))))
 
 (post "/auth"
       #:auth `(table person "lnuser" "passwd" "salt" ,my-hmac)
@@ -75,7 +70,6 @@
 					   )
 				      userid)
 				#f))
-		    (prjid "1")
 		    (requested-url (if sid (let* (
 						  (dest   (uri-decode (:from-post rc 'get-vals "destination")))				  	      
 						  )
