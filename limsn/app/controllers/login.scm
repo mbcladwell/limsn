@@ -23,6 +23,7 @@
 	   (login-failed (if (params rc "login_failed") (params rc  "login_failed") ""))
 	   (help-topic "login")
 	;;   (dest (:from-post rc 'get-vals "destination"))
+	   (dummy (:cookies-set! rc 'prjid "prjid" "1"))
 	   (dest (params rc "destination"))
 	   (destinationq (addquotes (if dest dest "/project/getall")))
 	 )
