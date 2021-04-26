@@ -22,10 +22,10 @@
 	#:cookies '(names prjid sid )
       (lambda (rc)
 	(let* (
-	       (dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
+	      ;; (dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
 	     ;;  (dummy (:cookies-remove! rc 'prjid ))
 	       (dummy (:cookies-set! rc 'prjid "prjid" "123"))
-	       (dummy (:cookies-setattr! rc 'prjid #:path "/"))				  	      	   
+	     ;;  (dummy (:cookies-setattr! rc 'prjid #:path "/"))				  	      	   
 		   )   
 	  (redirect-to rc  (get-redirect-uri "/test/page2"))	   
 		     )))
