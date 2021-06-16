@@ -201,6 +201,78 @@
 	   )))
 
 
+;; (post  "/plateset/addstep2"
+;;        #:conn #t
+;;        #:cookies '(names prjid lnuser userid group sid)
+;;        #:from-post 'qstr
+;;        (lambda (rc)
+;; 	 (let* ((help-topic "plateset")
+;; 		(psname (uri-decode (:from-post rc 'get-vals "psname")))
+;; 		(psdescr (uri-decode (:from-post rc 'get-vals "psdescr")))
+;;  	;;	(numplates (:from-post rc 'get-vals "numplates"))
+;;  		(numplates-pre (:from-post rc 'get-vals "numplates"))
+;; 		(gt10? (> (string->number numplates-pre) 10))
+;; 		(numplates (if gt10?
+;; 			       (let*(
+;; 				     (sql "SELECT  cust_id, cust_key, cust_email FROM config WHERE id=1")
+;; 				     (ret   (car (DB-get-all-rows (:conn rc sql))))
+;; 				     (cust_id (assoc-ref ret "cust_id"))
+;; 				     (cust_key (assoc-ref ret "cust_key"))
+;; 				     (email (assoc-ref ret "cust_email"))
+;; 				     (licensed? (if (and cust_id cust_key email ) (validate-key cust_id email cust_key) #f))
+;; 				     )
+;; 				 (if licensed? numplates-pre "10") )
+;;        		   numplates-pre))		
+
+;; 		(format (:from-post  rc 'get-vals "format"))
+;; 		(typeid (:from-post  rc 'get-vals "type"))
+;; 		(plttype (cond
+;; 		       ((equal? typeid "1") "assay")
+;; 		       ((equal? typeid "2") "rearray")
+;; 		       ((equal? typeid "3") "master")
+;; 		       ((equal? typeid "4") "daughter")
+;; 		       ((equal? typeid "5") "archive")
+;; 		       ((equal? typeid "6") "replicate")))
+;; 		(prjid (:cookies-value rc "prjid"))
+;; 		(sid (:cookies-value rc "sid"))
+;; 		(reps 1)  ;;new plate sets never have replicates
+;; 		(sql (string-append "select id, name from plate_layout_name WHERE source_dest = 'source' AND plate_format_id =" format))
+;; 		(holder  (DB-get-all-rows (:conn rc sql)))
+;; 		(sample-layout-pre '())
+;; 		(sample-layouts (string-concatenate (dropdown-contents-with-id holder sample-layout-pre)))
+		
+;; 		;; (sql2 (if (= reps 0)				    
+;; 		;; 	  (string-append "SELECT id, target_layout_name_name FROM target_layout_name WHERE (project_id= " prjid "  OR project_id IS NULL )")   
+;; 		;; 	  (string-append "SELECT id, target_layout_name_name FROM target_layout_name WHERE (project_id= " prjid " AND reps = " (number->string reps) ") OR (project_id IS NULL AND reps = " (number->string reps) ")")))
+;; 		 (sql2 (if (equal? format "96")				    
+;; 			  (string-append "SELECT id, target_layout_name_name FROM target_layout_name WHERE (project_id= " prjid " AND reps = 1) OR (project_id IS NULL AND reps =1)")
+;; 			  (string-append "SELECT id, target_layout_name_name FROM target_layout_name WHERE (project_id= " prjid "  OR project_id IS NULL )")   
+;; 			  ))
+
+;; 		(holder2  (DB-get-all-rows (:conn rc sql2)))
+;; 		(target-layout-pre '())
+;; 		(target-layouts  (string-concatenate (dropdown-contents-with-id holder2 target-layout-pre)))
+		
+;; 		(trg-desc (cond
+;; 			   ((equal? plttype "assay")
+;; 			    (if (equal? format "96") "(only singlicates)" "(optional)")
+;; 			    )
+;; 			    (else "(disabled -- for assay plates only)")))
+;; 		(prjidq (addquotes prjid))
+;; 		(sidq (addquotes sid))
+;; 		(psnameq (addquotes psname))
+;; 		(psdescrq (addquotes psdescr))
+;; 		(formatq (addquotes format))
+;; 		(plttypeidq (addquotes typeid))
+;; 		(plttypeq (addquotes plttype))
+;; 		(numplatesq (addquotes numplates))
+		
+;; 		)      
+;; 	   (view-render "addstep2" (the-environment)))))
+
+
+;; old version above
+;; this version makes use of (labsolns artass) maxnumplates variable
 (post  "/plateset/addstep2"
        #:conn #t
        #:cookies '(names prjid lnuser userid group sid)
@@ -211,19 +283,8 @@
 		(psdescr (uri-decode (:from-post rc 'get-vals "psdescr")))
  	;;	(numplates (:from-post rc 'get-vals "numplates"))
  		(numplates-pre (:from-post rc 'get-vals "numplates"))
-		(gt10? (> (string->number numplates-pre) 10))
-		(numplates (if gt10?
-			       (let*(
-				     (sql "SELECT  cust_id, cust_key, cust_email FROM config WHERE id=1")
-				     (ret   (car (DB-get-all-rows (:conn rc sql))))
-				     (cust_id (assoc-ref ret "cust_id"))
-				     (cust_key (assoc-ref ret "cust_key"))
-				     (email (assoc-ref ret "cust_email"))
-				     (licensed? (if (and cust_id cust_key email ) (validate-key cust_id email cust_key) #f))
-				     )
-				 (if licensed? numplates-pre "10") )
-       		   numplates-pre))		
-
+		(toobig? (> (string->number numplates-pre) (string->number maxnumplates)))
+		(numplates (if toobig? maxnumplates numplates-pre))		
 		(format (:from-post  rc 'get-vals "format"))
 		(typeid (:from-post  rc 'get-vals "type"))
 		(plttype (cond

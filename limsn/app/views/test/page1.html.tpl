@@ -8,7 +8,7 @@
     server: <%= server-check  %><br>
     client: <%= sid  %><br>
     prjid: <%= prjid-check  %><br>
-    
+    numplates <%= nplates %>
 <form action="/test/page1action" method="POST">
 <input type="submit" value="Send Request">
 </form></body>    </html>

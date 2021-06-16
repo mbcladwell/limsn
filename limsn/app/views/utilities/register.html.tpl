@@ -19,7 +19,7 @@
     </div>
     <div class="row">
     	<div class="form-group">
-	  <label for="custkey">Customer key:</label>
+	  <label for="custkey">License key:</label>
 	  <input type="text" id="custkey" class="form-control" name="custkey" placeholder="e.g. c1f400d8222fbe8b1fec6c24cccf14a2">
 	
       </div>

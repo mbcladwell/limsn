@@ -5,6 +5,7 @@
 	    my-hmac
 	    nopwd-conn
 	    ln-version
+	    maxnumplates
 	    process-pg-row-element
 	    process-list-of-rows
 	    get-c1
@@ -51,7 +52,8 @@
 
 ;; https://github.com/UMCUGenetics/guix-documentation/blob/master/for-bioinformaticians/guix-for-bioinformaticians.md
 
-(define ln-version "0.1.0-042020")
+(define ln-version "0.1.0-061621")
+(define maxnumplates "10")
 
 
 ;; (if (access? properties-filename R_OK)

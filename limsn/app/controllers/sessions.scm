@@ -9,7 +9,7 @@
 ;; default session is one hour.  Change it in:
 ;; artanis/artanis/session.scm L388
 ;; artanis/artanis/cookie.scm L129   to 21600 for 6 hours
-;; artanis/artanis/oht.scm L264   to 21600 for 6 hours
+;; artanis/artanis/oht.scm L264   to 21600 for 6 hours  2592000 for 1 month
 
 (define (prep-session-rows a)
   (fold (lambda (x prev)

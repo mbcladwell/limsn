@@ -16,7 +16,7 @@
  </div>
  <div class="form-row">
  <div class="form-group  col-md-6">   
-   <label for="numplates">Number of Plates:</label>  <input type="text"  class="form-control"  id="numplates" name="numplates" value="" required>
+     <label for="numplates">Number of Plates  (<%=  maxnumplates %> max):</label>  <input type="text"  class="form-control"  id="numplates" name="numplates" value="" required>
  </div>
  <div class="form-group col-md-6">
    <label for="format">Plate Format:</label>

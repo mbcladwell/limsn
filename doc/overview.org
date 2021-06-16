@@ -1,0 +1,5 @@
+#+title:LIMS*Nucleus Overview
+#+author:www.labsolns.com
+#+email:info@labsolns.com
+
+* Slide1

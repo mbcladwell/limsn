@@ -2,8 +2,11 @@
 ;; Please add your license header here.
 ;; This file is generated automatically by GNU Artanis.
 (define-artanis-controller test) ; DO NOT REMOVE THIS LINE!!!
+(add-to-load-path "/home/mbc/projects/limsn")
 (use-modules (artanis utils)(artanis irregex)(srfi srfi-1)(srfi srfi-19)(dbi dbi) (labsolns artass)
-	     (ice-9 pretty-print))
+	     (ice-9 pretty-print)
+	     (labsolns artass)
+	     (artanis config))
 
 (test-define page1
 	     (options #:session #t
@@ -13,6 +16,7 @@
 		      
 		      (sid (:cookies-value rc "sid"))
 		      (prjid-check (:cookies-value rc "prjid"))
+		      (nplates maxnumplates)
 		      )
    (view-render "page1" (the-environment)))
   ))

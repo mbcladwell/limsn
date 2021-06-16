@@ -13,7 +13,7 @@
   ;; 2 'positive' ? 0x00ff00  green
   ;; 3 'negative' ? 0xff0000  red
   ;; 4 'blank' ? 0x969696    grey
-  ;; 5 'edge' 
+  ;; 5 'edge'
   (fold (lambda (x prev)
           (let* ((index (get-c1 x))	
 		 (response (get-c2 x))

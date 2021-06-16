@@ -3,7 +3,8 @@
 ;; This file is generated automatically by GNU Artanis.
 (define-artanis-controller utilities) ; DO NOT REMOVE THIS LINE!!!
 
-(use-modules (artanis utils)(artanis irregex)(srfi srfi-1)(dbi dbi) (labsolns artass))
+(use-modules (artanis utils)(artanis irregex)(srfi srfi-1)(dbi dbi) (labsolns artass)
+	     (artanis config))
 
 (define (process-item x) (string-append "<tr><th>"(car x) "</th><th>" (cadr x) "</th></tr>"))
 
