@@ -1,3 +1,4 @@
+SET search_path = lims_nucleus,public;
 
 -- users------------------------------------------------------
 -- INSERT INTO lnuser ( lnuser_name, tags, usergroup_id, password) VALUES ('klohymim', 'NA', 2, 'hwc3v4_rbkT-1EL2KI-JBaqFq0thCXM_');

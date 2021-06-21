@@ -42,7 +42,6 @@ GRANT TEMPORARY on DATABASE lndb to ln_user;
 
 
 set schema 'lims_nucleus';	
-SET search_path = lims_nucleus,public;
 --CREATE EXTENSION pgcrypto;
 CREATE EXTENSION intarray;
 --Once set up:
