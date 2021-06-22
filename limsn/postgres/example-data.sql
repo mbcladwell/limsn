@@ -1,3 +1,4 @@
+
 -- TRUNCATE project, plate_set, plate, hit_sample, hit_list, assay_run, assay_result, sample, well, lnsession, target_layout, target, target_layout_name RESTART IDENTITY CASCADE;
 
 -- INSERT INTO lnsession (lnuser_id) VALUES (1);
