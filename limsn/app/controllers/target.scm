@@ -57,7 +57,7 @@
 	       (options #:conn #t
 			#:cookies '(names prjid lnuser userid group sid))
 	       (lambda (rc)
-		 (let* ((help-topic "target")
+		 (let* ((help-topic "targets")
 			(prjid (:cookies-value rc "prjid"))
 			(userid (:cookies-value rc "userid"))
 			(group (:cookies-value rc "group"))
@@ -298,7 +298,7 @@
 	       (options #:conn #t
 			#:cookies '(names prjid lnuser userid group sid))
 	(lambda (rc)
-	  (let* ((help-topic "target")
+	  (let* ((help-topic "targets")
 		 (prjid (:cookies-value rc "prjid"))
 		 (userid (:cookies-value rc "userid"))
 		 (group (:cookies-value rc "group"))

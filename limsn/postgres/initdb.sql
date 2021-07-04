@@ -19,6 +19,8 @@ GRANT CONNECT ON DATABASE lndb TO ln_user;  -- others inherit
 --I am naming the schema lims_nucleus (not lndb which would be confusing). Pick any name. Optionally make ln_admin the owner of the schema:
 
 CREATE SCHEMA lims_nucleus AUTHORIZATION ln_admin;
+GRANT ALL ON SCHEMA lims_nucleus TO ln_admin;
+
 
 ALTER DATABASE lndb SET search_path = lims_nucleus;  -- see notes
 
@@ -26,11 +28,11 @@ ALTER ROLE ln_admin IN DATABASE lndb SET search_path = lims_nucleus; -- not inhe
 ALTER ROLE ln_user   IN DATABASE lndb SET search_path = lims_nucleus;
 
 GRANT USAGE  ON SCHEMA lims_nucleus TO ln_user;
-GRANT USAGE  ON SCHEMA lims_nucleus TO ln_admin;
-GRANT CREATE ON SCHEMA lims_nucleus TO ln_admin;
+-- GRANT USAGE  ON SCHEMA lims_nucleus TO ln_admin;
+-- GRANT CREATE ON SCHEMA lims_nucleus TO ln_admin;
 
-ALTER DEFAULT PRIVILEGES FOR ROLE ln_admin
-GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE  ON TABLES TO ln_admin;  
+-- ALTER DEFAULT PRIVILEGES FOR ROLE ln_admin
+-- GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE  ON TABLES TO ln_admin;  
 
 ALTER DEFAULT PRIVILEGES FOR ROLE ln_user
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO ln_user;

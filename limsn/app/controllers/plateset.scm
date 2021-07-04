@@ -20,14 +20,14 @@
 		(type (result-ref x "plate_type_name"))
 		(numplates (get-c6 x))
 		(format  (result-ref x "format"))
-		(layout (result-ref x "name"))
+		(layout (result-ref x "sys_name"))
 		(layoutid (get-c9 x))
 		(reps (get-c10 x))
 		(worklist (if (equal? (get-c11 x) "0") "" (get-c11 x)))
 		(worklist-for-data (if (equal? (get-c11 x) "0") "0" (get-c11 x)))
 		(idval (string-append (number->string (cdr (car x))) "+" numplates "+" format "+" layoutid "+" reps "+" worklist-for-data))
 		)
-            (cons (string-append "<tr><td> <input type=\"checkbox\" id=\"" plate_set_sys_name  "\" name=\"plateset-id\" value=\"" idval "\" onclick=\"handleChkbxClick()\"></td><td><a href=\"/plate/getpltforps?id=" (number->string (cdr (car x))) "\">" plate_set_sys_name "</a></td><td>" plate_set_name "</td><td>" descr "</td><td>" type "</td><td>" numplates "</td><td>" format "</td><td>" layout "</td><td>" reps "</td><td>" worklist "</td></tr>")
+            (cons (string-append "<tr><td> <input type=\"checkbox\" id=\"" plate_set_sys_name  "\" name=\"plateset-id\" value=\"" idval "\" onclick=\"handleChkbxClick()\"></td><td><a href=\"/plate/getpltforps?id=" (number->string (cdr (car x))) "\">" plate_set_sys_name "</a></td><td>" plate_set_name "</td><td>" descr "</td><td>" type "</td><td>" numplates "</td><td>" format "</td><td><a href=\"/layout/lytbyid?id="  layoutid "\">" layout "</a></td><td>" reps "</td><td>" worklist "</td></tr>")
 		  prev)))
         '() a))
 
@@ -74,6 +74,7 @@
      #:cookies '(names prjid sid)			  
 		 (lambda (rc)
 		   (let* (
+			 
 			  (help-topic "plateset")
 			  (prjid  (get-from-qstr rc "id"))
 			  (dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
@@ -83,7 +84,7 @@
 			  (sid (:cookies-value rc "sid"))	
 		;;	  (sql (string-append "select plate_set.id, plate_set_sys_name, plate_set_name, plate_set.descr, plate_type_name, num_plates, plate_set.plate_format_id, plate_layout_name_id, plate_layout_name.replicates from plate_set, plate_type, plate_layout_name where plate_set.plate_type_id=plate_type.id AND plate_set.plate_layout_name_id=plate_layout_name.id AND plate_set.project_id =" prjid ))
 
-(sql (string-append "SELECT plate_set.id, plate_set.plate_set_sys_name, plate_set_name, plate_set.descr,  plate_type.plate_type_name, num_plates, format,  plate_layout_name.name,  plate_layout_name.id, plate_layout_name.replicates, rearray_pairs.ID FROM  plate_format, plate_type, plate_layout_name, plate_set FULL outer JOIN rearray_pairs ON plate_set.id= rearray_pairs.dest WHERE plate_format.id = plate_set.plate_format_id AND plate_set.plate_layout_name_id = plate_layout_name.id  AND plate_set.plate_type_id = plate_type.id  AND project_id =" prjid " ORDER BY plate_set.id"))
+(sql (string-append "SELECT plate_set.id, plate_set.plate_set_sys_name, plate_set_name, plate_set.descr,  plate_type.plate_type_name, num_plates, format,  plate_layout_name.sys_name,  plate_layout_name.id, plate_layout_name.replicates, rearray_pairs.ID FROM  plate_format, plate_type, plate_layout_name, plate_set FULL outer JOIN rearray_pairs ON plate_set.id= rearray_pairs.dest WHERE plate_format.id = plate_set.plate_format_id AND plate_set.plate_layout_name_id = plate_layout_name.id  AND plate_set.plate_type_id = plate_type.id  AND project_id =" prjid " ORDER BY plate_set.id"))
 			  
 			  (holder (DB-get-all-rows (:conn rc sql)))
 			  (body  (string-concatenate  (prep-ps-for-prj-rows holder)) )
@@ -102,7 +103,8 @@
       #:cookies '(names prjid userid group sid)
 		  (lambda (rc)
 		    (let* ((help-topic "plateset")
-			   (prjid (:cookies-value rc "prjid"))
+			   ;;(prjid (:cookies-value rc "prjid"))
+			   (prjid (:cookies-ref rc 'prjid "prjid"))
 			   (sid (:cookies-value rc "sid"))
 			 	   ;;(qstr  (:from-post rc 'get))
 			  ;; (a (delete #f (map (match-lambda (("plateset-id" x) x)(_ #f))  qstr)))
@@ -143,11 +145,12 @@
 (post "/plateset/group"
       #:conn #t
       #:from-post 'qstr
-      #:cookies '(names prjid userid group sid)
+      #:cookies '(names prjid sid)
 		  (lambda (rc)
 		    (let* ((help-topic "group")
 			   (today (date->string  (current-date) "~Y-~m-~d"))
-			 (prjid (:cookies-ref rc 'prjid "prjid"))
+		;;	 (prjid (:cookies-ref rc 'prjid "prjid"))
+			 (prjid (:cookies-value rc "prjid"))
 			 (sid (:cookies-value rc "sid"))
 			 (qstr  (:from-post rc 'get))
 			 (a (delete #f (map (match-lambda (("plateset-id" x) x)(_ #f))  qstr)))
@@ -157,6 +160,7 @@
 			 (d (map string-append c (circular-list " (")  ))
 			 (ps-num-text  (string-join (map string-append d (map cadr start) (circular-list ");"))))
 			 (tot-plates (apply + (map string->number (map cadr start))))
+			 (username (cadr (get-id-name-group-email-for-session rc sid)))		    
 			 (format-equal? (apply equal? (map caddr start)))
 			 (layout-equal? (apply equal? (map cadddr start)))
 			 (format (car (map caddr start)))
@@ -757,7 +761,7 @@
 	(let* ((help-topic "barcodes")	
 	       (all-ps-ids  (list (uri-decode (:from-post rc 'get-vals "plateset-id")))) ;;these are the checked ps-ids - should be only one
 	       ;; (filename (:from-post rc 'get-vals "myfile"))
-	       (prjid (:cookies-ref rc 'prjid "prjid"))
+	       (prjid (:cookies-value rc "prjid"))
 	       (sid (:cookies-value rc "sid"))
 	       (start (map string-split all-ps-ids (circular-list #\+))) ;;((1 2 96 1) (2 2 96 1))
 	       (psid (caar start))
