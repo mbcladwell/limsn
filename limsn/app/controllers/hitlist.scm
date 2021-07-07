@@ -60,13 +60,15 @@
 
 (hitlist-define gethlbyid
 		(options #:conn #t
-			 #:cookies '(names prjid lnuser userid group sid))
+			 #:cookies '(names prjid sid))
 		(lambda (rc)
 		  (let* ((help-topic "hitlist")
 			 (prjid (:cookies-value rc "prjid"))
 			 (sid (:cookies-value rc "sid"))
 			 (hlid  (get-from-qstr rc "id")) ;; hit-list id
-			 (sql (string-append "select sample.id, sample.sample_sys_name, sample.project_id, sample.accs_id  from hit_list, sample, hit_sample where sample.id=hit_sample.sample_id AND hit_list.id=hit_sample.hitlist_id AND hitlist_id =" hlid ))
+			 ;;here I think the prjid in the sample table is redundant; ignore it and get the prjid <- plate_set <- assay_run
+			 ;;(sql (string-append "select sample.id, sample.sample_sys_name, sample.project_id, sample.accs_id  from hit_list, sample, hit_sample where sample.id=hit_sample.sample_id AND hit_list.id=hit_sample.hitlist_id AND hitlist_id =" hlid ))
+			 (sql (string-append "select sample.id, sample.sample_sys_name, plate_set.project_id, sample.accs_id  from hit_list, sample, hit_sample, plate_set, assay_run where sample.id=hit_sample.sample_id AND hit_list.id=hit_sample.hitlist_id AND plate_set.id=assay_run.plate_set_id AND hit_list.assay_run_id=assay_run.id  AND hitlist_id =" hlid ))
 			 (holder (DB-get-all-rows (:conn rc sql)))
 			 (numhits (length  holder))
 			 (body  (string-concatenate  (prep-hl-rows holder)) )

@@ -1,3 +1,4 @@
+
 ;; Controller plateset definition of lnserver
 ;; Please add your license header here.
 ;; This file is generated automatically by GNU Artanis.
@@ -104,7 +105,7 @@
 		  (lambda (rc)
 		    (let* ((help-topic "plateset")
 			   ;;(prjid (:cookies-value rc "prjid"))
-			   (prjid (:cookies-ref rc 'prjid "prjid"))
+			   (prjid (:cookies-value rc "prjid"))
 			   (sid (:cookies-value rc "sid"))
 			 	   ;;(qstr  (:from-post rc 'get))
 			  ;; (a (delete #f (map (match-lambda (("plateset-id" x) x)(_ #f))  qstr)))
@@ -126,7 +127,7 @@
 		(options #:conn #t #:cookies '(names prjid userid group sid))
 		(lambda (rc)
 		  (let* ((help-topic "plateset")
-			 (prjid (:cookies-ref rc 'prjid "prjid"))
+			 (prjid (:cookies-value rc "prjid"))
 			 (userid (:cookies-value rc "userid"))
 			 (group (:cookies-value rc "group"))
 			 (sid (:cookies-value rc "sid"))
@@ -501,7 +502,7 @@
 		 (lambda (rc)
 		   (let* (
 			  (help-topic "plateset")
-			  (prjid (:cookies-ref rc 'prjid "prjid"))
+			  (prjid (:cookies-value rc "prjid"))
 			 (sid (:cookies-value rc "sid"))
 			  ;;(filename (:from-post rc 'get-vals "myfile"))
 			 ;; (a (:from-post rc 'get-vals "datatransfer"))
@@ -592,7 +593,7 @@
 		 (lambda (rc)
 		   (let* (
 			  (help-topic "plateset")
-			 (prjid (:cookies-ref rc 'prjid "prjid"))
+			 (prjid (:cookies-value rc "prjid"))
 			 (userid (:cookies-value rc "userid"))
 			 (group (:cookies-value rc "group"))
 			 (sid (:cookies-value rc "sid"))
@@ -627,7 +628,7 @@
 			   (all-ps-ids  (list (uri-decode (:from-post rc 'get-vals "plateset-id")))) ;;these are the checked ps-ids - should be only one
 			   (activity (:from-post rc 'get-vals "activity"))
 			  ;; (filename (:from-post rc 'get-vals "myfile"))
-			   (prjid (:cookies-ref rc 'prjid "prjid"))
+			   (prjid (:cookies-value rc "prjid"))
 			   (userid (:cookies-value rc "userid"))
 			   (group (:cookies-value rc "group"))
 			   (sid (:cookies-value rc "sid"))
@@ -823,7 +824,7 @@
       #:cookies '(names prjid sid)
       (lambda (rc)
 	(let* ((help-topic "barcodes")	
-	       (prjid (:cookies-ref rc 'prjid "prjid"))
+	       (prjid (:cookies-value rc "prjid"))
 	       (sid (:cookies-value rc "sid"))
 	       (datatransfer (uri-decode (:from-post rc 'get-vals "datatransfer")))
 	       (psid (:from-post rc 'get-vals "psid"))
