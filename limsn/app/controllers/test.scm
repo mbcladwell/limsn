@@ -46,7 +46,8 @@
 	       (let* ((server-check (:session rc 'check))
 		      (sid (:cookies-value rc "sid"))
 		      (prjid-check (:cookies-value rc "prjid"))
-		      )
+		      (confy  (number->string (get-conf '(cookie expire))))
+	   	      )
    (view-render "page2" (the-environment))
   )))
 

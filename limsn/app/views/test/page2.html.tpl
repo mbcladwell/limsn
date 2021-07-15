@@ -7,5 +7,6 @@
     server: <%= server-check  %><br>
     client: <%= sid  %><br>
     prjid: <%= prjid-check  %><br>
+    confy: <%= confy  %><br>
 
 </body></html>
