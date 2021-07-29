@@ -16,7 +16,7 @@
  </div>
  <div class="form-row">
  <div class="form-group  col-md-6">   
-     <label for="numplates">Number of Plates  (<%=  maxnumplates %> max):</label>  <input type="text"  class="form-control"  id="numplates" name="numplates" value="" required>
+     <label for="numplates">Number of Plates  (<%=  allowedplates %> max):</label>  <input type="text"  class="form-control"  id="numplates" name="numplates" value="" required>
  </div>
  <div class="form-group col-md-6">
    <label for="format">Plate Format:</label>
@@ -36,12 +36,13 @@
  
 
  <div class="form-row">
-    <div class="form-group col-md-6">
-   <input type="submit"  class="btn btn-primary" value="Submit" id="importButton" name="importButton" enabled>
-    </div>
+     <div class="form-group col-md-6">
+	 <input type="submit"  class="btn btn-primary" value="Submit" id="importButton" name="importButton" enabled>
+     </div>
  </div>
 
 
+ <input type="hidden" id="allowedplates" name="allowedplates" value=<%= allowedplatesq %>>
 
  
 </form> 

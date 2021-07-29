@@ -38,7 +38,7 @@
 			  (prjid (:cookies-value rc "prjid"))
 			  (sid (:cookies-value rc "sid"))
 			  (identity (get-id-name-group-email-for-session rc sid))
-			  (username (cadr identity))
+		  (username (cadr identity))
 			  (group (caddr identity))
 			  (sql  "select sessions.sid, person.lnuser, person.usergroup, sessions.expires  from sessions, person, sess_person where sessions.sid=sess_person.sid AND person.id=sess_person.person_id")
 			  (holder (DB-get-all-rows (:conn rc sql)))

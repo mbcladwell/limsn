@@ -60,17 +60,33 @@
 	     ;; requested url, sid, userid must be available at top level
 	     (let* ((sid (:auth rc))		    
 		    (userid (if sid (let* (
-					   (sql "select id, lnuser, usergroup from person")
-					   (ret  (DB-get-all-rows (:conn rc sql)))  ;;this is in artanis/artanis/db.scm
-					   (name (:from-post rc 'get-vals "lnuser"))
-					   (userid (get-id-for-name name ret))
+					   ;; (sql "select id, lnuser, usergroup from person")
+					   ;; (ret  (DB-get-all-rows (:conn rc sql)))  ;;this is in artanis/artanis/db.scm
+					   ;; (name (:from-post rc 'get-vals "lnuser"))
+					   ;; (userid (get-id-for-name name ret))
+					   ;; (dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
+					   ;; (dummy (:cookies-remove! rc 'prjid ))
+					   ;; (dummy (:cookies-set! rc 'prjid "prjid" "1"))
+					   ;; (dummy (:cookies-setattr! rc 'prjid #:path "/"))
+					   ;; ;;(dummy (:cookies-set! rc 'sid "sid" sid))
+					   ;; (sql2 (string-append "INSERT INTO sess_person ( sid, person_id) VALUES ('" sid "', " userid ")"))
+					   ;; (dummy (:conn rc sql2))
+
 					   (dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
 					   (dummy (:cookies-remove! rc 'prjid ))
 					   (dummy (:cookies-set! rc 'prjid "prjid" "1"))
 					   (dummy (:cookies-setattr! rc 'prjid #:path "/"))
-					   ;;(dummy (:cookies-set! rc 'sid "sid" sid))
+					   (sql "select id, lnuser, usergroup from person")
+					   (ret  (DB-get-all-rows (:conn rc sql)))  ;;this is in artanis/artanis/db.scm
+					   (name (:from-post rc 'get-vals "lnuser"))
+					   (userid (get-id-for-name name ret))
 					   (sql2 (string-append "INSERT INTO sess_person ( sid, person_id) VALUES ('" sid "', " userid ")"))
 					   (dummy (:conn rc sql2))
+					 ;;  (sql3 (string-append "INSERT INTO sessions ( sid) VALUES ('" sid "')"))
+					  ;; (dummy ((:auth rc)))
+
+					   
+					   
 					   )
 				      userid)
 				#f))

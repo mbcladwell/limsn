@@ -14,7 +14,8 @@ REVOKE ALL ON DATABASE lndb FROM public;  -- see notes below!
 
 GRANT CONNECT ON DATABASE lndb TO ln_user;  -- others inherit
 
---\connect lndb  -- psql syntax
+--Must connect to lndb here
+\connect lndb  -- psql syntax
 
 --I am naming the schema lims_nucleus (not lndb which would be confusing). Pick any name. Optionally make ln_admin the owner of the schema:
 
