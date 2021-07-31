@@ -16,7 +16,7 @@
  </div>
  <div class="form-row">
  <div class="form-group  col-md-6">   
-     <label for="numplates">Number of Plates  (<%=  allowedplates %> max):</label>  <input type="text"  class="form-control"  id="numplates" name="numplates" value="" required>
+     <label for="numplates"><a href="http://labsolns.com/software/configuration"> Number of Plates</a>  (<%=  allowedplates %> max):</label>  <input type="text"  class="form-control"  id="numplates" name="numplates" value="" required>
  </div>
  <div class="form-group col-md-6">
    <label for="format">Plate Format:</label>

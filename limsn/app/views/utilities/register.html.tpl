@@ -11,23 +11,23 @@
     <div class="row">
       
 	<div class="form-group">
-	  <label for="prj">Customer ID:</label>
-	  <input type="text" id="custid" class="form-control" name="custid"  placeholder="e.g. 16fjkhwF2rkdbwogqLdHZG4fb87jUxtJBU">
+	  <label for="prj">Registration ID:</label>
+	  <input type="text" id="custid" class="form-control" name="custid" size="60" placeholder="e.g. 16fjkhwF2rkdbwogqLdHZG4fb87jUxtJBU">
 	
       </div>
        
     </div>
     <div class="row">
     	<div class="form-group">
-	  <label for="custkey">License key:</label>
-	  <input type="text" id="custkey" class="form-control" name="custkey" placeholder="e.g. c1f400d8222fbe8b1fec6c24cccf14a2">
+	  <label for="custkey">Registration Key:</label>
+	  <input type="text" id="custkey" class="form-control" name="custkey" size="60" placeholder="e.g. c1f400d8222fbe8b1fec6c24cccf14a2">
 	
       </div>
        
     </div>
     <div class="row">
     	<div class="form-group">
-	  <label for="email">email:</label><input type="text" id="email" class="form-control" name="email" placeholder="user@acme.com"> 
+	  <label for="email">email:</label><input type="text" id="email" class="form-control" name="email" size="60" placeholder="user@acme.com"> 
 	
       </div>
      
