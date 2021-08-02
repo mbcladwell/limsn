@@ -6,9 +6,9 @@
 
   <h1>Test</h1><br><br>
 
-  <br><br>  <%= isreg? %>
+  <br><br>  <%= header %>
  
-<br><br><%= sql %>
+<br><br><%= fname %>
 
 
   
