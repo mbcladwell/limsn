@@ -29,7 +29,7 @@
 	      (method git-fetch)
 	   (uri (git-reference 
 		 (url "https://github.com/mbcladwell/limsn.git")
-		 (commit "0954e331ede375c4cdb59e9946bfb394a5090a8e")))    
+		 (commit "602429fad097ce037a3ffe70af1f97b6f0d82930")))    
               (sha256
                (base32
                 "1a5lbdby17vdvn67nqrm0k9zq8kpg4wi3s25v9bcn6wp6zxz1936"))
