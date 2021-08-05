@@ -29,7 +29,7 @@
 	      (method git-fetch)
 	   (uri (git-reference 
 		 (url "https://github.com/mbcladwell/limsn.git")
-		 (commit "602429fad097ce037a3ffe70af1f97b6f0d82930")))    
+		 (commit "8669fbe0ef30bac94bc86d866b91cffcdd2bf7c1")))    
               (sha256
                (base32
                 "1a5lbdby17vdvn67nqrm0k9zq8kpg4wi3s25v9bcn6wp6zxz1936"))
@@ -45,18 +45,7 @@
      `(("bash"       ,bash)         ;for the `source' builtin
        ("pkgconfig"  ,pkg-config)
        ("util-linux" ,util-linux))) ;for the `script' command
-    (arguments
-     '(#:make-flags
-       ;; TODO: The documentation must be built with the `docs' target.
-       (let* ((out (assoc-ref %outputs "out"))
-              (scm (string-append out "/share/guile/site/3.0"))
-              (go  (string-append out "/lib/guile/3.0/site-ccache")))
-         ;; Don't use (%site-dir) for site paths.
-         (list (string-append "MOD_PATH=" scm)
-               (string-append "MOD_COMPILED_PATH=" go)))
-       #:test-target "test"
-     
-       ))
+   
     (synopsis "Microwell Plate management Software")
     (description "description")
     (home-page "http://www.labsolns.com/")
