@@ -220,6 +220,6 @@
 ;; (username (cadr (get-id-name-group-email-for-session rc sid)))
 
 (define (get-redirect-uri dest)
-;;   (string->uri (string-append "http://" (get-conf '(host name)) ":3000/" (string-trim dest #\/))))
- (string->uri (string-append "http://" (get-conf '(host name)) ":3000/" )))
+   (string->uri (string-append "http://" (get-conf '(host name)) ":3000/" (string-trim dest #\/))))
+;; (string->uri (string-append "http://" (get-conf '(host name)) ":3000/" )))
 
