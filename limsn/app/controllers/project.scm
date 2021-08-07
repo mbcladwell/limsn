@@ -48,7 +48,8 @@
 (project-define getall
 		(options #:conn #t 
 			 #:cookies '(names prjid sid)
-			 #:with-auth "/login" )
+			;; #:with-auth "/login" )
+			 #:with-auth  (get-redirect-uri "/login"))
 			 (lambda (rc ) 
 			   (let* ( 
 				  (help-topic "project")
