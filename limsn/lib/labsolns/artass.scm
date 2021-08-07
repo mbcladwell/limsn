@@ -221,5 +221,5 @@
 
 (define (get-redirect-uri dest)
 ;;   (string->uri (string-append "http://" (get-conf '(host name)) ":3000/" (string-trim dest #\/))))
- (string->uri (string-append "http://" (get-conf '(host name)) ":3000/" (string-trim dest "/"))))
+ (string->uri (string-append "http://" (get-conf '(host name)) ":3000/" )))
 
