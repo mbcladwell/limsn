@@ -50,7 +50,7 @@
 			 #:cookies '(names prjid sid)
 			 ;;	 #:with-auth "/login" )
 			 #:session #t
-			 #:with-auth  (get-redirect-uri "login"))
+			 #:with-auth  #t)
 			 (lambda (rc ) 
 			   (let* ( 
 				  (help-topic "project")
