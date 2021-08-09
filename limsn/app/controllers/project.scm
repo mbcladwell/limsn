@@ -1,4 +1,4 @@
-;; Controller project definition of lnserver
+;; Controller project definition of lnservern
 ;; Please add your license header here.
 ;; This file is generated automatically by GNU Artanis.
 (define-artanis-controller project) ; DO NOT REMOVE THIS LINE!!!
@@ -46,11 +46,11 @@
 ;; 	 (view-render "/getall" (the-environment)))))
 
 (project-define getall
-		(options #:conn #t 
-			 #:cookies '(names prjid sid)
-			 ;;	 #:with-auth "/login" )
+		(options #:conn #t
 			 #:session #t
-			 #:with-auth  #t)
+			 #:cookies '(names prjid sid)
+			 #:with-auth "/login" )
+			;; #:with-auth  (get-redirect-uri "login"))
 			 (lambda (rc ) 
 			   (let* ( 
 				  (help-topic "project")

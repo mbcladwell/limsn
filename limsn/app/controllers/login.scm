@@ -23,7 +23,7 @@
 	   (login-failed (if (params rc "login_failed") (params rc  "login_failed") ""))
 	   (help-topic "login")
 	;;   (dest (:from-post rc 'get-vals "destination"))
-	   (dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
+	;;   (dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
 	   (dummy (:cookies-remove! rc 'prjid ))
 	   (dummy (:cookies-set! rc 'prjid "prjid" "1"))
 	   (dummy (:cookies-setattr! rc 'prjid #:path "/"))
@@ -72,7 +72,7 @@
 					   ;; (sql2 (string-append "INSERT INTO sess_person ( sid, person_id) VALUES ('" sid "', " userid ")"))
 					   ;; (dummy (:conn rc sql2))
 
-					   (dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
+					   ;;(dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
 					   (dummy (:cookies-remove! rc 'prjid ))
 					   (dummy (:cookies-set! rc 'prjid "prjid" "1"))
 					   (dummy (:cookies-setattr! rc 'prjid #:path "/"))

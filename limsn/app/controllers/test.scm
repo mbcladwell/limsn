@@ -38,7 +38,7 @@
       (lambda (rc)
 	(let* (;;note all 3 command required to set cookie
 	       (dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
-	     ;;  (dummy (:cookies-remove! rc 'prjid ))
+	       (dummy (:cookies-remove! rc 'prjid ))
 	       (dummy (:cookies-set! rc 'prjid "prjid" "123"))
 	       (dummy (:cookies-setattr! rc 'prjid #:path "/"))				  	      	   
 		   )   
