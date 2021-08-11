@@ -78,11 +78,12 @@
 			 
 			  (help-topic "plateset")
 			  (prjid  (get-from-qstr rc "id"))
-			  (dummy (:cookies-set! rc 'prjid "prjid" (get-prjid rc sid)))
+			 ;; (dummy (:cookies-set! rc 'prjid "prjid" (get-prjid rc sid)))
 			 ;; (dummy (:cookies-remove! rc 'prjid ))
-			  (dummy (:cookies-set! rc 'prjid "prjid" prjid))
-			  (dummy (:cookies-setattr! rc 'prjid #:path "/"))
-			  (sid (:cookies-value rc "sid"))	
+			 ;; (dummy (:cookies-set! rc 'prjid "prjid" prjid))
+			 ;; (dummy (:cookies-setattr! rc 'prjid #:path "/"))
+			  (sid (:cookies-value rc "sid"))
+			  (dummy (update-prjid rc sid prjid))
 		;;	  (sql (string-append "select plate_set.id, plate_set_sys_name, plate_set_name, plate_set.descr, plate_type_name, num_plates, plate_set.plate_format_id, plate_layout_name_id, plate_layout_name.replicates from plate_set, plate_type, plate_layout_name where plate_set.plate_type_id=plate_type.id AND plate_set.plate_layout_name_id=plate_layout_name.id AND plate_set.project_id =" prjid ))
 
 (sql (string-append "SELECT plate_set.id, plate_set.plate_set_sys_name, plate_set_name, plate_set.descr,  plate_type.plate_type_name, num_plates, format,  plate_layout_name.sys_name,  plate_layout_name.id, plate_layout_name.replicates, rearray_pairs.ID FROM  plate_format, plate_type, plate_layout_name, plate_set FULL outer JOIN rearray_pairs ON plate_set.id= rearray_pairs.dest WHERE plate_format.id = plate_set.plate_format_id AND plate_set.plate_layout_name_id = plate_layout_name.id  AND plate_set.plate_type_id = plate_type.id  AND project_id =" prjid " ORDER BY plate_set.id"))

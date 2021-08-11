@@ -39,6 +39,7 @@
 	    get-redirect-uri
 	    get-redirect-string
 	    get-prjid
+	    update-prjid
 	    ))
 
 (use-modules (artanis artanis)(artanis utils)(artanis config) (ice-9 local-eval) (srfi srfi-1)
@@ -220,6 +221,11 @@
 
 ;; (username (cadr (get-id-name-group-email-for-session rc sid)))
 
+;; (identity (get-id-name-group-email-for-session rc sid))
+;;  (username (cadr identity))
+;;  (userid (car identity))
+;;  (group (caddr identity))
+
 (define (get-redirect-uri dest)
    (string->uri (string-append "http://" (get-conf '(host name)) ":3000/" (string-trim dest #\/))))
 
@@ -231,5 +237,10 @@
 	 (ret (car(DB-get-all-rows (:conn rc sql))))
 	 (prjid (assoc-ref ret "prjid")))  
    (number->string prjid)))
+
+(define (update-prjid rc sid prjid)
+(let* ((sql (string-append "UPDATE sess_person SET prjid=" prjid " WHERE sess_person.sid='" sid "'"))
+	 (dummy  (:conn rc sql)))  
+   #f))
 
 

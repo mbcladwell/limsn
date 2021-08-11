@@ -223,11 +223,12 @@
 			#:cookies '(names prjid lnuser userid group sid))
 		(lambda (rc)
 		  (let* ((help-topic "targets")
-			 (sid (:cookies-value rc "sid")))
+			 (sid (:cookies-value rc "sid"))
 			 (prjid (get-prjid rc sid))
-			 (userid (:cookies-value rc "userid"))
-			 (group (:cookies-value rc "group"))
-		    (view-render "addbulk" (the-environment)))))
+			 (vars (get-id-name-group-email-for-session rc sid))
+			 (userid (car vars))
+			 (group (caddr vars)))
+			 (view-render "addbulk" (the-environment)))))
 
 ;; (get "/addbulk" #:conn #t 
 ;; 		(lambda (rc)
