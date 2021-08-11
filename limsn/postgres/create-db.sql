@@ -37,6 +37,7 @@ CREATE TABLE sessions
         sid varchar(32) PRIMARY KEY,
         data text,
         expires varchar(29),
+        valid varchar(5),
         client varchar(39));
 
 INSERT INTO sessions (sid, expires) VALUES ('9999999999', 'Sat, 31 Oct 2020 13:41:27 GMT' );
@@ -47,9 +48,10 @@ CREATE TABLE sess_person
 (        
         sid varchar(32) PRIMARY KEY,
         person_id INTEGER,
+        prjid INTEGER,
         FOREIGN KEY (person_id) REFERENCES person(ID));
 
-INSERT INTO sess_person (sid, person_id) VALUES ('9999999999', 1);
+INSERT INTO sess_person (sid, person_id, prjid) VALUES ('9999999999', 1, 1);
 
 
 

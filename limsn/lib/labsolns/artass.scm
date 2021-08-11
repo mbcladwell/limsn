@@ -37,6 +37,8 @@
 	    validate-key
 	    get-id-name-group-email-for-session
 	    get-redirect-uri
+	    get-redirect-string
+	    get-prjid
 	    ))
 
 (use-modules (artanis artanis)(artanis utils)(artanis config) (ice-9 local-eval) (srfi srfi-1)
@@ -123,8 +125,7 @@
   (let* ((step1 (string-concatenate (map process-pg-row-element x) ))
 	 (step2  (xsubstring step1 0 (- (string-length step1) 2))) ;;trim the final comma
 	 )
-   (string-append "{" step2 "},")
-))
+   (string-append "{" step2 "},")))
 
 (define (dropdown-contents-with-id in out)
   ;;in: ((("id" . 7) ("name" . "8 controls col 12")) (("id" . 1) ("name" . "4 controls col 12")))
@@ -221,5 +222,14 @@
 
 (define (get-redirect-uri dest)
    (string->uri (string-append "http://" (get-conf '(host name)) ":3000/" (string-trim dest #\/))))
-;; (string->uri (string-append "http://" (get-conf '(host name)) ":3000/" )))
+
+(define (get-redirect-string dest)
+   (string-append "http://" (get-conf '(host name)) ":3000/" (string-trim dest #\/)))
+
+(define (get-prjid rc sid)
+ (let* ((sql (string-append "SELECT prjid FROM sess_person WHERE sess_person.sid='" sid "'"))
+	 (ret (car(DB-get-all-rows (:conn rc sql))))
+	 (prjid (assoc-ref ret "prjid")))  
+   (number->string prjid)))
+
 

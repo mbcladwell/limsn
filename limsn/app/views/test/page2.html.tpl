@@ -4,9 +4,21 @@
 
 <html><body>
     <h1>Page 2</h1>
-    server: <%= server-check  %><br>
-    client: <%= sid  %><br>
-    prjid: <%= prjid-check  %><br>
-    confy: <%= confy  %><br>
+    <h2>Server</h2>
+    (server-check (:session rc 'check)) server side: <%= server-check  %><br>
+    (cookies (rc-cookie rc)): <%= cookies  %><br>
+    (sid  (:cookies-check rc "sid")): <%= sid  %><br>
+    (prjid  (:cookies-check rc "prjid"): <%= prjid  %><br>
+    <br><br>
+    <h2>Client</h2>
+    (sid2  (cookie-has-key? cookies "sid")):  <%= sid2  %><br>
+    (prjid2  (cookie-has-key? cookies "prjid")): <%= prjid2  %><br>
+    (sid3  (:cookies-value rc "sid")): <%= sid3  %><br>
+    (prjid3  (:cookies-value rc "prjid")): <%= prjid3  %><br>
 
+    
+    rc:
+    <br><br>
+
+    <%= rc %>
 </body></html>

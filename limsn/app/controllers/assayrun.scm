@@ -128,8 +128,8 @@
 		   (let* (
 			  (help-topic "assayrun")
 			  (arid   (get-from-qstr rc "arid"))
-			  (prjid (:cookies-value rc "prjid"))
 			  (sid (:cookies-value rc "sid"))
+			  (prjid (get-prjid rc sid))
 			  (outfile (get-rand-file-name "ar" "png"))			  
 			  (response "1")
 			  (metric "3")			  
@@ -189,8 +189,8 @@
 		 (lambda (rc)
 		   (let* (
 			  (help-topic "assayrun")
-			  (prjid (:cookies-value rc "prjid"))
 			  (sid (:cookies-value rc "sid"))
+			  (prjid (get-prjid rc sid))
 			  (arid  (stripfix (:from-post rc 'get-vals "arid")))
 			  (outfile (get-rand-file-name "ar" "png"))	 
 			  (body-encode   (uri-decode (:from-post rc 'get-vals "bodyencode"))) ;;body of the ar table
@@ -284,8 +284,8 @@
 		 (lambda (rc)
 		   (let* (
 			  (help-topic "assayrun")
-			  (prjid (:cookies-value rc "prjid"))
 			  (sid (:cookies-value rc "sid"))
+			  (prjid (get-prjid rc sid))
 			  (arid  (stripfix (:from-post rc 'get-vals "arid")))
 			  (sql  (string-append "Select * from get_all_data_for_assay_run(" arid ")"))			  
 			  (holder (DB-get-all-rows (:conn rc sql)))			  
@@ -355,8 +355,8 @@
 		(lambda (rc)
 		  (let* ((help-topic "gplot")
 			;; (qstr  (:from-post rc 'get))
-			 (prjid (:cookies-value rc "prjid"))
 			 (sid (:cookies-value rc "sid"))
+			 (prjid (get-prjid rc sid))
 			 (stats (DB-get-all-rows (:conn rc  (string-append "select response_type,  max_response, min_response, mean_bkgrnd, std_dev_bkgrnd,  mean_pos,  stdev_pos, mean_neg_3_sd, mean_neg_2_sd, mean_pos_3_sd,  mean_pos_2_sd from assay_run_stats where assay_run_id=1"))))
 			 (prjidq (addquotes prjid))
 			 (sidq (addquotes sid))    			
@@ -432,7 +432,7 @@
 ;;   (let* (
 ;; 	 (help-topic "assayrun")
 ;; 	 (arid  (get-from-qstr rc "arid"))
-;; 	  (prjid (:cookies-value rc "prjid"))
+;; 	  (prjid (get-prjid rc sid))
 ;; 	  (userid (:cookies-value rc "userid"))
 ;; 	  (group (:cookies-value rc "group"))
 ;; 	  (sid (:cookies-value rc "sid"))

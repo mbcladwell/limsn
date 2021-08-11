@@ -74,9 +74,9 @@
 			#:cookies '(names prjid userid sid))
   (lambda (rc)
     (let* ((help-topic "layouts")
-	     (prjid (:cookies-value rc "prjid"))
+	     (sid (:cookies-value rc "sid"))
+	       (prjid (get-prjid rc sid))
 	       (userid (:cookies-value rc "userid"))
-	       (sid (:cookies-value rc "sid"))
 	       (sql  "select id, sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest from plate_layout_name")
 	   (holder  (DB-get-all-rows (:conn rc sql)))
 	   (body (string-concatenate (prep-lyt-rows holder))))
@@ -100,7 +100,7 @@
 ;; 	       (lambda (rc)
 ;; 		 (let* (
 ;; 			(help-topic "layouts")
-;; 			(prjid (:cookies-value rc "prjid"))
+;; 			(prjid (get-prjid rc sid))
 ;; 			(userid (:cookies-value rc "userid"))
 ;; 			(sid (:cookies-value rc "sid"))
 ;; 			(id  (get-from-qstr rc "id"))
@@ -142,9 +142,9 @@
 		#:cookies '(names prjid userid sid))
 	       (lambda (rc)
 		 (let* ((help-topic "layouts")
-			(prjid (:cookies-value rc "prjid"))
-			(userid (:cookies-value rc "userid"))
 			(sid (:cookies-value rc "sid")))
+			(prjid (get-prjid rc sid))
+			(userid (:cookies-value rc "userid"))
 		   (view-render "select" (the-environment))
 		   )))
 
@@ -275,9 +275,9 @@
       ;; view a layout before import
    (lambda (rc)
      (let* ((help-topic "layouts")
-	    (prjid (:cookies-value rc "prjid"))
 	    (sid (:cookies-value rc "sid"))
-
+	    (prjid (get-prjid rc sid))
+	   
 	    (infile (get-rand-file-name "lyt" "txt")) ;;do not incorporate the "pub" here because the html
 	   (spl-out  (get-rand-file-name "lyt" "png")) ;; does not want the pub
 	   ; (spl-out2 (string-append "\"" spl-out "\""))
@@ -398,8 +398,8 @@
 	       (lambda (rc)
 		 (let* (
 			(help-topic "layouts")
-			(prjid (:cookies-value rc "prjid"))
 			(sid (:cookies-value rc "sid"))
+			(prjid (get-prjid rc sid))
 			(lytid  (get-from-qstr rc "id"))
 			
 			;; (infile (get-rand-file-name "lyt" "txt"))

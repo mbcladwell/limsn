@@ -7,7 +7,7 @@
 
 <html>
   <head>
-    <title><%= (current-appname) %>
+    <title>Login test page
     </title>
     
 
@@ -16,6 +16,23 @@
     <h1>test#logtest</h1>
     <p>Rendered from app/views/test/logtest.html.tpl.</p>
 
-    Group:<%= grp %><br>
+    (server-check (:session rc 'check)):  <%= server-check %><br>
+    (cookies (rc-cookie rc)):  <%= cookies %><br>
+    (sid  (:cookies-check rc "sid")):   <%= sid %><br>
+    (prjid  (:cookies-check rc "prjid")):  <%= prjid %><br>
+    (sid2  (:cookies-value rc "sid")):  <%= sid2 %><br>
+    (prjid2  (:cookies-value rc "prjid")):  <%= prjid2 %><br>
+
+    
+
+    <form action="/test/loginaction" method="POST">
+	<input type="submit" value="Login">
+	<br><br>
+
+	rc:
+	<br><br>
+
+	<%= rc %>
+    </form>
   </body>
 </html>
