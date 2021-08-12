@@ -48,12 +48,13 @@
 (project-define getall
 		(options #:conn #t
 			 #:session #t
-			 #:cookies '(names prjid sid)
-			 #:with-auth "/login" )
+			 #:cookies '(names prjid sid))
+		;;	 #:with-auth "/login" )
 			;; #:with-auth  (get-redirect-uri "login"))
 			 (lambda (rc ) 
 			   (let* ( 
 				  (help-topic "project")
+				   (sess-check (:session rc 'check))
 				  (sid (:cookies-value rc "sid"))
 				  (prjid (get-prjid rc sid))
 				  (holder   (DB-get-all-rows (:conn rc "select id, project_sys_name, project_name, descr from project" )))  
@@ -61,7 +62,9 @@
 				  (prjidq (addquotes prjid))
 				  (sidq (addquotes sid))				  
 				  )
-			     (view-render "getall" (the-environment)))))
+			     (if sess-check (view-render "getall" (the-environment))
+				 (redirect-to rc (get-redirect-uri "/login?destination=/getall")))
+			     )))
 
 
 (get "/project/add"
