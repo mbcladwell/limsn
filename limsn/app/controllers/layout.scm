@@ -139,12 +139,13 @@
 
 (layout-define select
 	       (options 
-		#:cookies '(names prjid userid sid))
+		#:cookies '(names prjid sid))
 	       (lambda (rc)
 		 (let* ((help-topic "layouts")
 			(sid (:cookies-value rc "sid")))
-			(prjid (get-prjid rc sid))
-			(userid (:cookies-value rc "userid"))
+		   (prjid (get-prjid rc sid))
+		   (identity (get-id-name-group-email-for-session rc sid))
+		   (userid (car identity))
 		   (view-render "select" (the-environment))
 		   )))
 
