@@ -489,14 +489,14 @@ sys_enable_guix_daemon()
 
 sys_authorize_build_farms()
 { # authorize the public key of the build farm
-    if prompt_yes_no "Permit downloading pre-built package binaries from the \
-project's build farm? (yes/no)"; then
+#    if prompt_yes_no "Permit downloading pre-built package binaries from the \
+#project's build farm? (yes/no)"; then
         guix archive --authorize \
              < "~root/.config/guix/current/share/guix/ci.guix.gnu.org.pub" \
             && _msg "${PAS}Authorized public key for ci.guix.gnu.org"
-        else
-            _msg "${INF}Skipped authorizing build farm public keys"
-    fi
+ #       else
+  #          _msg "${INF}Skipped authorizing build farm public keys"
+   # fi
 }
 
 sys_create_init_profile()
