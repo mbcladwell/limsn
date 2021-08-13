@@ -6,7 +6,7 @@
 ;; (use-modules (artanis utils) (ice-9 local-eval) (srfi srfi-1)
    ;;          (artanis irregex)(dbi dbi) (ice-9 textual-ports)(web uri)(ice-9 rdelim)(lnserver sys methods))
 
-(use-modules (artanis utils)(artanis irregex)(srfi srfi-1)(dbi dbi) (labsolns artass))
+(use-modules (artanis artanis)(artanis config)(artanis utils)(artanis irregex)(srfi srfi-1)(dbi dbi) (labsolns artass))
 
 (define (prep-project-rows a)
   (fold (lambda (x prev)
@@ -48,9 +48,8 @@
 (project-define getall
 		(options #:conn #t
 			 #:session #t
-			 #:cookies '(names prjid sid))
-		;;	 #:with-auth "/login" )
-			;; #:with-auth  (get-redirect-uri "login"))
+			 #:cookies '(names prjid sid)
+			 #:with-auth (current-myhost ))
 			 (lambda (rc ) 
 			   (let* ( 
 				  (help-topic "project")
@@ -62,8 +61,7 @@
 				  (prjidq (addquotes prjid))
 				  (sidq (addquotes sid))				  
 				  )
-			     (if sess-check (view-render "getall" (the-environment))
-				 (redirect-to rc (get-redirect-uri "/login?destination=/getall")))
+			      (view-render "getall" (the-environment))				 
 			     )))
 
 

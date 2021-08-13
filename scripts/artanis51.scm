@@ -71,9 +71,17 @@
 		   (substitute* "artanis/config.scm"
 		   	       (("debug.monitor = <PATHs>\")")
 		   		"debug.monitor = <PATHs>\")\n ((cookie expire)\n       3600\n      \"Cookie expiration time in seconds.\n       1 hour is 3600\n       6 hours 21600\n       1 month 2592000\n cookie.expire = <integer>\")\n\n ((cookie maxplates)\n       10\n      \"Maximum number of plates per plate-set.\n cookie.maxplates = <integer>\")"))
+		  
 
-
-                  (substitute* "artanis/artanis.scm"
+		   (substitute* "artanis/config.scm"
+		   		(("format #f \"http://~a:~a\" \\(get-conf '\\(host addr\\)\\)")
+		   	 	 "format #f \"http://~a:~a\" real-host"))
+		   
+		   (substitute* "artanis/artanis.scm"
+		   		(("               static-page-emitter\n")
+		   		  "               static-page-emitter\n               current-myhost\n"))
+				   
+                   (substitute* "artanis/artanis.scm"
                     (("[[:punct:][:space:]]+->json-string[[:punct:][:space:]]+")
                      ""))
                   #t)
