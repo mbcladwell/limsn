@@ -102,6 +102,7 @@ sed -i "s/host.name = 127.0.0.1/host.name = $IPADDRESS/" /home/admin/limsn/limsn
 sed -i "s/cookie.maxplates = 10/cookie.maxplates = $MAXNUMPLATES/" /home/admin/limsn/limsn/conf/artanis.conf
 
  sudo ./limsn/scripts/guix-install-mod.sh
+source /home/admin/.guix-profile/etc/profile 
 
 
 ## using guile-3.0.2
@@ -112,16 +113,9 @@ sudo guix install glibc-utf8-locales
 #$ echo $PATH
 #/home/admin/.config/guix/current/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
          
-source $GUIX_PROFILE/etc/profile 
-         
-         
-##git clone --depth 1 https://github.com/mbcladwell/limsn.git
+             
 guix package --install-from-file=/home/admin/limsn/scripts/artanis51.scm
 
-
-   ## sudo chmod -R a=rwx /home/admin/projects/limsn
-
-    
 }
 
 initdb()
@@ -148,9 +142,6 @@ psql -U admin -h 127.0.0.1 lndb -a -f /home/admin/limsn/limsn/postgres/initdbb.s
 psql -U ln_admin -h 127.0.0.1 -d lndb -a -f /home/admin/limsn/limsn/postgres/create-db.sql
 psql -U ln_admin -h 127.0.0.1 -d lndb -a -f /home/admin/limsn/limsn/postgres/example-data.sql
 
-sed -i "s/host.name = 127.0.0.1/host.name = $IPADDRESS/" /home/admin/limsn/limsn/conf/artanis.conf
-sed -i "s/cookie.maxplates = 10/cookie.maxplates = $MAXNUMPLATES/" /home/admin/limsn/limsn/conf/artanis.conf
-
     
 }
 
@@ -159,7 +150,7 @@ configure()
 {
 
 echo "export GUIX_PROFILE=\"/home/admin/.guix-profile\"" >> /home/admin/.bashrc
-echo " . \"$GUIX_PROFILE/etc/profile\"" >> /home/admin/.bashrc
+echo " . \"/home/admin/.guix-profile/etc/profile\"" >> /home/admin/.bashrc
 echo "export LC_ALL=\"C\"" >> /home/admin/.bashrc
 echo "export GUIX_LOCPATH=\"$HOME/.guix-profile/lib/locale\"" >> /home/admin/.bashrc
 
@@ -189,14 +180,18 @@ main()
     installguix
 ##    initdb
     cp /home/admin/limsn/scripts/install-lnpg.sh /home/admin    
-    
+    chmod 777 /home/admin/install-lnpg.sh
+    source /home/admin/.guix-profile/etc/profile
+    source /home/admin/.bashrc
     _msg "${INF}cleaning up ${tmp_path}"
     rm -r "${tmp_path}"
 
     _msg "${PAS}LIMS*Nucleus has successfully been installed!"
 
     # Required to source /etc/profile in desktop environments.
-    _msg "${INF}Run 'nohup ~/run-limsn.sh &' to start the server in detached mode."
+     _msg "${INF}Run './install-lnpg.sh' to install the database"
  }
+
+## https://www.ubuntubuzz.com/2021/04/lets-try-guix.html
 
 main "$@"

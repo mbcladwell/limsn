@@ -1,7 +1,6 @@
 #!/bin/sh
 
 
-
 mkdir lndata
 
 echo "export PGDATA=\"/home/admin/lndata\"" >> /home/admin/.bashrc
@@ -21,4 +20,5 @@ psql -U admin -h 127.0.0.1 lndb -a -f /home/admin/limsn/limsn/postgres/initdbb.s
 psql -U ln_admin -h 127.0.0.1 -d lndb -a -f /home/admin/limsn/limsn/postgres/create-db.sql
 psql -U ln_admin -h 127.0.0.1 -d lndb -a -f /home/admin/limsn/limsn/postgres/example-data.sql
 
-
+echo "LIMS*Nucleus database successfully installed."
+echo "Run 'nohup ~/run-limsn.sh' to start the application server in detached mode."

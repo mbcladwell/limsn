@@ -618,11 +618,14 @@ main()
     _msg "${INF}cleaning up ${tmp_path}"
     rm -r "${tmp_path}"
 
+
+    cp /home/admin/limsn/scripts/install-lnpg.sh
     _msg "${PAS}Guix has successfully been installed!"
     _msg "${INF}Run 'info guix' to read the manual."
 
     # Required to source /etc/profile in desktop environments.
-    _msg "${INF}Please log out and back in to complete the installation."
+    _msg "${INF}Please log out and back in to complete the Guix installation."
+   
  }
 
 main "$@"
