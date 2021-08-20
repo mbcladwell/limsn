@@ -49,7 +49,7 @@
 		(options #:conn #t
 			 #:session #t
 			 #:cookies '(names prjid sid)
-			 #:with-auth (current-myhost) )
+			 #:with-auth "login" )
 			 (lambda (rc ) 
 			   (let* ( 
 				  (help-topic "project")

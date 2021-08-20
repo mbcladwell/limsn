@@ -11,6 +11,9 @@
     (prjid  (:cookies-check rc "prjid"): <%= prjid  %><br>
     (sid2  (:cookies-value rc "sid")):  <%= sid2 %><br>
     (prjid2  (:cookies-value rc "prjid")):  <%= prjid2 %><br>
+    current-myhost:   <%= cmyhost %><br>
+    wauth:   <%= wauth %><br>
+    
     <br><br>
     <form action="/test/page1action" method="POST">
 	<input type="submit" value="Send Request">

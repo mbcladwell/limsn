@@ -25,6 +25,8 @@
 
 (utilities-define menu
 		  (options #:cookies '(names prjid lnuser userid group sid)
+			   #:session #t
+			   #:with-auth "login"
 			   #:conn #t)
 		  (lambda (rc)
 		    (let* ((version ln-version)

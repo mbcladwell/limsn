@@ -122,26 +122,13 @@ initdb()
 {
     _msg "configuring db"
 
+ source /home/admin/.guix-profile/etc/profile
+ source /home/admin/.bashrc
+ cp /home/admin/limsn/scripts/install-lnpg.sh /home/admin    
+ chmod 777 /home/admin/install-lnpg.sh
 
-mkdir lndata
-
-echo "export PGDATA=\"/home/admin/lndata\"" >> /home/admin/.bashrc
-export PGDATA="/home/admin/lndata"
-
-
-initdb -D /home/admin/lndata
-
-cp /home/admin/limsn/limsn/postgres/pg_hba.conf /home/admin/lndata
-cp /home/admin/limsn/limsn/postgres/pg_ident.conf /home/admin/lndata
-cp /home/admin/limsn/limsn/postgres/postgresql.conf /home/admin/lndata
-
-pg_ctl -D /home/admin/lndata -l logfile start
-
-psql -U admin -h 127.0.0.1 postgres -a -f /home/admin/limsn/limsn/postgres/initdba.sql
-psql -U admin -h 127.0.0.1 lndb -a -f /home/admin/limsn/limsn/postgres/initdbb.sql
-psql -U ln_admin -h 127.0.0.1 -d lndb -a -f /home/admin/limsn/limsn/postgres/create-db.sql
-psql -U ln_admin -h 127.0.0.1 -d lndb -a -f /home/admin/limsn/limsn/postgres/example-data.sql
-
+ /home/admin/install-lnpg.sh
+ 
     
 }
 
@@ -178,16 +165,14 @@ main()
     updatesys
     configure
     installguix
-##    initdb
-    cp /home/admin/limsn/scripts/install-lnpg.sh /home/admin    
-    chmod 777 /home/admin/install-lnpg.sh
-    source /home/admin/.guix-profile/etc/profile
-    source /home/admin/.bashrc
+    initdb
+    
+   
     _msg "${INF}cleaning up ${tmp_path}"
-    rm -r "${tmp_path}"
+   
 
     _msg "${PAS}LIMS*Nucleus has successfully been installed!"
-
+    source /home/admin/.bashrc
     # Required to source /etc/profile in desktop environments.
      _msg "${INF}Run './install-lnpg.sh' to install the database"
  }

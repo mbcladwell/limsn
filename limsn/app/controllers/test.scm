@@ -57,6 +57,8 @@
 		      (prjid  (:cookies-check rc "prjid"))
 		      (sid2  (:cookies-value rc "sid"))
 		      (prjid2  (:cookies-value rc "prjid"))
+		      (cmyhost (current-myhost))
+		      (wauth (#:with-auth cmyhost))
 		      )
 		 (view-render "page1" (the-environment)))
 	       ))

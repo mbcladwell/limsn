@@ -23,7 +23,9 @@
 
 (target-define getall
 	       (options #:conn #t
-			 #:cookies '(names prjid lnuser userid group sid))
+			#:session #t
+			#:with-auth "login"
+			#:cookies '(names prjid lnuser userid group sid))
 		(lambda (rc)
 		  (let* ((help-topic "targets")
 			 (sid (:cookies-value rc "sid"))
@@ -55,6 +57,8 @@
 
 (target-define gettrglyt
 	       (options #:conn #t
+			#:session #t
+			#:with-auth "login"
 			#:cookies '(names prjid lnuser userid group sid))
 	       (lambda (rc)
 		 (let* ((help-topic "targets")

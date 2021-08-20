@@ -128,6 +128,8 @@
 
 (hitlist-define forprj
 		(options #:conn #t
+			 #:session #t
+			 #:with-auth "login"
 			 #:cookies '(names prjid sid))
   (lambda (rc)
     (let* ((help-topic "hitlist")
@@ -301,10 +303,10 @@
     (let* ((help-topic "hitlist")
 	   (hlid (:from-post rc 'get "hlid"))
 	   (psid (:from-post rc 'get "psid"))
+	   (sid (:cookies-value rc "sid"))
 	   (prjid (get-prjid rc sid))	   
 	   (userid (:cookies-value rc "userid"))
 	   (group (:cookies-value rc "group"))
-	   (sid (:cookies-value rc "sid"))
 	   (numhits (:from-post rc 'get "numhits"))
 	   (psname (uri-decode (:from-post rc 'get "psname")))
 	   (psdescr (uri-decode (:from-post rc 'get "psdescr")))

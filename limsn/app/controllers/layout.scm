@@ -71,6 +71,8 @@
 
 (layout-define getall
 	       (options #:conn #t
+			#:session #t
+			#:with-auth "login"
 			#:cookies '(names prjid userid sid))
   (lambda (rc)
     (let* ((help-topic "layouts")

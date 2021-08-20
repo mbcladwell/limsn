@@ -72,6 +72,8 @@
 
 (get "/plateset/getps"
      #:conn #t
+     #:session #t
+     #:with-auth "login"
      #:cookies '(names prjid sid)			  
 		 (lambda (rc)
 		   (let* (
