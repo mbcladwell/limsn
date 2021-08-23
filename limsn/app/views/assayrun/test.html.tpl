@@ -16,6 +16,7 @@
     <%= thresholdstr %><br><br>
     <%= arid %><br><br>
     <%= num-hits %><br><br>
+    <%= hits-tbl-sql %><br><br>
 
 
  

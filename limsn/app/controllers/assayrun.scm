@@ -142,6 +142,7 @@
 			  (holder2 (DB-get-all-rows (:conn rc (get-main-data-table-sql response arid))))
 			  (nrows (length holder2))
 			  (data-body  (string-concatenate (prep-ar-for-g holder2)))
+			  (hits-tbl-sql (get-hits-table-sql response thresholdstr arid))
 			  (holder3 (DB-get-all-rows (:conn rc (get-hits-table-sql response thresholdstr arid))))
 			  (num-hits (number->string (length holder3)))
 			  (dummy (make-scatter-plot outfile response metric threshold nrows num-hits data-body ))			  	
@@ -155,7 +156,7 @@
 			  (body-encodeq (addquotes body-encode))
 			  (hit-lists-encodeq (if hit-lists-encode (addquotes  hit-lists-encode) #f))
 			  )
-		     ;; (view-render "test" (the-environment)))))
+		    ;;  (view-render "test" (the-environment)))))
 		     (view-render "getarid" (the-environment)))))
 
 

@@ -73,11 +73,10 @@
 (get "/plateset/getps"
      #:conn #t
      #:session #t
-     #:with-auth "login"
-     #:cookies '(names prjid sid)			  
+;;     #:with-auth "login"
+     #:cookies '(names sid)			  
 		 (lambda (rc)
-		   (let* (
-			 
+		   (let* (			 
 			  (help-topic "plateset")
 			  (prjid  (get-from-qstr rc "id"))
 			 ;; (dummy (:cookies-set! rc 'prjid "prjid" (get-prjid rc sid)))

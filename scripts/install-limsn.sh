@@ -172,9 +172,10 @@ main()
    
 
     _msg "${PAS}LIMS*Nucleus has successfully been installed!"
+    _msg "${PAS}Please exit and log back in to initialize environment variables."
     source /home/admin/.bashrc
     # Required to source /etc/profile in desktop environments.
-     _msg "${INF}Run './install-lnpg.sh' to install the database"
+     _msg "${INF}Run 'nohup ~/run-limsn.sh' to start the application server in detached mode."
  }
 
 ## https://www.ubuntubuzz.com/2021/04/lets-try-guix.html

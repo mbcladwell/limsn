@@ -332,17 +332,42 @@
       )))
 
 
+;; plate	well	response	type	spl
+;; 2	92	0.258117	1	184
+;; 2	91	0.362062	1	183
+;; 2	88	0.307483	1	180
+;; 2	85	0.428674	1	177
+;; 2	82	0.264262	1	174
+
+
+;;(((plate_id . 30) (by_col . 169) (bkgrnd_sub . 0.00861211) (well_type_id . 1) (sample_id . 2853)) ((plate_id . 31) (by_col . 230) (bkgrnd_sub . 0.0102675) (well_type_id . 1) (sample_id . 3419)) ((plate_id . 30) (by_col . 268) (bkgrnd_sub . 0.0112139) (well_type_id . 1) (sample_id . 3062))
+;; because column names are not quoted I cannot use assoc-ref    (assoc-ref lst "a")
 
 (define (process-hl-row lst results )
+  
   (if (null? (cdr lst))
         (begin
-	 (set! results  (string-append results "<tr><td>" (caar lst) "</td><td>" (cadar lst) "</td><td>" (cadr (cdddar lst))   "</td></tr>" ))
+	 (set! results  (string-append results "<tr><td>" (number->string (cdaar  lst)) "</td><td>" (number->string (cdadar lst)) "</td><td>"  (number->string (cdadr (cdddar lst)))  "</td></tr>" ))
        results)
        (begin
-	 (set! results (string-append results "<tr><td>" (caar lst) "</td><td>" (cadar lst) "</td><td>"  (cadr (cdddar lst))  "</td></tr>" ))
+	 (set! results  (string-append results "<tr><td>" (number->string (cdaar  lst)) "</td><td>" (number->string (cdadar lst)) "</td><td>" (number->string (cdadr (cdddar lst)))  "</td></tr>" ))
+	 
 	 (process-hl-row (cdr lst) results)
        )
        ))
+
+
+;; (define (process-hl-row lst results )
+;;   (if (null? (cdr lst))
+;;         (begin
+;; 	 (set! results  (string-append results "<tr><td>" (number->string (cadr (caar lst))) "</td><td>" (cadar lst) "</td><td>" (cadr (cdddar lst))   "</td></tr>" ))
+;;        results)
+;;        (begin
+;; 	 (set! results (string-append results "<tr><td>" (number->string (assoc-ref lst "plate_id")) "</td><td>" (number->string (assoc-ref lst "by_col")) "</td><td>"  (number->string (assoc-ref lst "sample_id"))  "</td></tr>" ))
+;; 	 (process-hl-row (cdr lst) results)
+;;        )
+;;        ))
+
 
 
 
@@ -372,13 +397,26 @@
 (define (process-hl-get-int-array lst results )
   (if (null? (cdr lst))
         (begin
-	 (set! results  (string-append results  (cadr (cdddar lst))  ))
+	 (set! results  (string-append results (number->string (cdadr (cdddar lst)))  ))
 	  results )
        (begin
-	 (set! results (string-append results  (cadr (cdddar lst))  "+" ))
+	 (set! results (string-append results  (number->string (cdadr (cdddar lst)))  "+" ))
 	 (process-hl-get-int-array (cdr lst) results)
        )
        ))
+
+;; (define (process-hl-get-int-array lst results )
+;;   (if (null? (cdr lst))
+;;         (begin
+;; 	 (set! results  (string-append results  (cadr (cdddar lst))  ))
+;; 	  results )
+;;        (begin
+;; 	 (set! results (string-append results  (cadr (cdddar lst))  "+" ))
+;; 	 (process-hl-get-int-array (cdr lst) results)
+;;        )
+;;        ))
+
+
 
 
 
@@ -403,6 +441,15 @@
       #f))
 
 
+(define (get-hits-table-sql response threshold arid )
+  (let* ((column (cond ((equal? response "0") "bkgrnd_sub")
+		       ((equal? response "1") "norm")
+		       ((equal? response "2") "norm_pos")
+		       ((equal? response "3") "p_enhance")))
+	 )
+(string-append  "SELECT  ROW_NUMBER () OVER (ORDER BY assay_result." column " DESC), assay_result." column ", plate_layout.well_type_id FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id AND plate_layout.well_type_id=1 AND assay_result." column " > " threshold " AND assay_run.ID =" arid) ))
+
+
 
 (post "/hitlist/viewhits"
 		 #:conn #t
@@ -413,19 +460,27 @@
 	   (sid (:cookies-value rc "sid"))
 	   (prjid (get-prjid rc sid))	   
 	   (arid (:from-post rc 'get-vals "arid"))
-	   (threshold-id (:from-post rc 'get-vals "threshold"))
-	   (threshold (cond((equal? threshold-id "1") "mean(pos)")
-			   ((equal? threshold-id "2") "mean(neg) + 2SD")
-			   ((equal? threshold-id "3") "mean(neg) + 3SD")
-			   (else "(Manually entered)")))
+	   (threshold (:from-post rc 'get-vals "threshold"))
+	   ;; (thresholddesc (cond((equal? threshold-id "1") "mean(pos)")
+	   ;; 		   ((equal? threshold-id "2") "mean(neg) + 2SD")
+	   ;; 		   ((equal? threshold-id "3") "mean(neg) + 3SD")
+	   ;; 		   (else "(Manually entered)")))
 	   (response-id (:from-post rc 'get-vals "response"))
 	   (response (cond ((equal? response-id "0") "Background Subtracted")
 			   ((equal? response-id "1") "Normalized")
 			   ((equal? response-id "2") "Normalized to postivie controls")
 			   ((equal? response-id "3") "% Enhanced")))
+	   (column (cond ((equal? response-id "0") "bkgrnd_sub")
+		       ((equal? response-id "1") "norm")
+		       ((equal? response-id "2") "norm_pos")
+		       ((equal? response-id "3") "p_enhance")))
+	 ;;  (hitfile (string-append "../lnserver/pub/" (uri-decode (:from-post rc 'get-vals "hitfile"))))
+	   ;;  (aslist (get-hitlist-as-list hitfile))
 	   
-	   (hitfile (string-append "../lnserver/pub/" (uri-decode (:from-post rc 'get-vals "hitfile"))))
-	   (aslist (get-hitlist-as-list hitfile))
+	   (sql (string-append "SELECT  plate_plate_set.plate_id, well.by_col, assay_result." column ", plate_layout.well_type_id, well_sample.sample_id FROM assay_result, assay_run, plate_layout_name, plate_layout, plate_set, plate, plate_plate_set, well_numbers, well, well_sample WHERE assay_run.plate_set_id = plate_set.id AND assay_run.plate_layout_name_id = plate_layout_name.id AND assay_run.id=assay_result.assay_run_id AND assay_result.plate_order = plate_plate_set.plate_order AND assay_result.well = well.by_col AND plate_set.plate_layout_name_id = plate_layout_name.id AND plate_set.plate_format_id = well_numbers.plate_format AND plate_layout.well_by_col=well.by_col AND plate_set.id = plate_plate_set.plate_set_id AND plate_plate_set.plate_id = plate.id AND plate.id = well.plate_id AND well.by_col = well_numbers.by_col AND well_sample.well_id =  well.id AND well.by_col=well_numbers.by_col AND plate_layout_name.id= plate_layout.plate_layout_name_id AND plate_layout.well_type_id=1 AND assay_result.assay_run_id = "  arid " AND assay_result." column " > "  threshold  " ORDER BY assay_result." column))
+	 
+	   (aslist (DB-get-all-rows (:conn rc sql)))
+
 	   (body (process-hl-row aslist ""))
 	   ;;(body (get-hitlist-file hitfile))
 	   (num-hits (length aslist))
@@ -433,7 +488,7 @@
 	 (aridq (addquotes arid))
 	   )  
       (view-render "viewhits" (the-environment))
-    ;;  (view-render "test2" (the-environment))
+     ;; (view-render "test2" (the-environment))
       )))
 
 
@@ -455,6 +510,7 @@
 	   (int-array  (uri-decode (:from-post rc 'get-vals "int-array")))
 	   (int-array (string-replace-substring int-array "+" "\", \""))
 	   (sql (string-append "SELECT new_hit_list('" hlname "', '" descr "', " num-hits ", " arid ", '" sid "', '{\"" int-array"\"}')" ))
+	   (dummy (:conn rc sql))
 	   (dest (string-append "/assayrun/getarid?arid=" arid))
 	   )  
       (redirect-to rc (get-redirect-uri dest))
@@ -462,3 +518,32 @@
       )))
 
 
+
+
+
+
+
+(define (process-list-into-pgarray lst results)
+  ;; results is a string like "'{"2" "3" "4"}'" note the single quotes
+ (if (null? (cdr lst))
+        (begin
+	 (set! results  (string-append results "\"" (number->string (cdar lst)) "\"" ))
+       (string-append "'{" results  "}'"))
+       (begin
+	 (set! results  (string-append results "\"" (number->string (cdar lst)) "\","  ))
+	 (process-list-into-pgarray (cdr lst) results)) ))
+
+  
+(define (make-threshold-hitlist response threshold arid rc)
+  (let* ((column (cond ((equal? response "0") "bkgrnd_sub")
+		       ((equal? response "1") "norm")
+		       ((equal? response "2") "norm_pos")
+		       ((equal? response "3") "p_enhance")))
+	 (sql (string-append "SELECT  plate_plate_set.plate_id, well.by_col, assay_result." column ", plate_layout.well_type_id, well_sample.sample_id FROM assay_result, assay_run, plate_layout_name, plate_layout, plate_set, plate, plate_plate_set, well_numbers, well, well_sample WHERE assay_run.plate_set_id = plate_set.id AND assay_run.plate_layout_name_id = plate_layout_name.id AND assay_run.id=assay_result.assay_run_id AND assay_result.plate_order = plate_plate_set.plate_order AND assay_result.well = well.by_col AND plate_set.plate_layout_name_id = plate_layout_name.id AND plate_set.plate_format_id = well_numbers.plate_format AND plate_layout.well_by_col=well.by_col AND plate_set.id = plate_plate_set.plate_set_id AND plate_plate_set.plate_id = plate.id AND plate.id = well.plate_id AND well.by_col = well_numbers.by_col AND well_sample.well_id =  well.id AND well.by_col=well_numbers.by_col AND plate_layout_name.id= plate_layout.plate_layout_name_id AND plate_layout.well_type_id=1 AND assay_result.assay_run_id = " (number->string arid) " AND assay_result." column " > " (number->string threshold)  " ORDER BY assay_result." column))
+       (all-hit-ids  (DB-get-all-rows(:conn rc sql)))
+       (numhits (length all-hit-ids))
+       (a (map car all-hit-ids))	 
+       (results (process-list-into-pgarray a ""))
+	 )
+    (list numhits results)
+    ))

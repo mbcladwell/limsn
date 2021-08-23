@@ -16,6 +16,7 @@
     ")(display  thresholdstr )(display "<br><br>
     ")(display  arid )(display "<br><br>
     ")(display  num-hits )(display "<br><br>
+    ")(display  hits-tbl-sql )(display "<br><br>
 
 
  

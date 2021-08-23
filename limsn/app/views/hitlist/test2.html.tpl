@@ -3,11 +3,13 @@
      This file is generated automatically by GNU Artanis. -->
 
 <html>
-<body>
+    <body>
 
 
 
-<%= sql %><br><br>
+	<%= body %><br><br>
+	<%= num-hits %><br><br>
+	<%= hl-int-arrayq %><br><br>
 
 
 
