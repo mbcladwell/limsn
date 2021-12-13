@@ -89,7 +89,7 @@
    </li>
     
  <li class="active"> <a href="http://www.labsolns.com/software/<%= help-topic %> ">HELP</a></li>
-  <li class="active"><a href="../help/toc">TOC</a></li>
+  <li class="active"><a href="http://www.labsolns.com/software/toc">TOC</a></li>
   <li class="active"><a href="mailto:info@labsolns.com">Contact</a></li>
 </ul>
   </nav>
