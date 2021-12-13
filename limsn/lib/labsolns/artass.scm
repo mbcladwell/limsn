@@ -56,7 +56,7 @@
 ;; https://github.com/UMCUGenetics/guix-documentation/blob/master/for-bioinformaticians/guix-for-bioinformaticians.md
 
 (define ln-version "0.1.0-061621")
-(define maxnumplates (get-conf '(cookie maxplates)))
+(define maxnumplates (get-conf  'maxnumplates))
 
 
 ;; (if (access? properties-filename R_OK)
