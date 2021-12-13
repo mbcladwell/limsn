@@ -103,7 +103,8 @@
 
 (hitlist-define importhl
 		;; for ?arid=1
-		(options #:cookies '(names prjid sid))
+		(options #:cookies '(names prjid sid)
+			 #:conn #t)
 		(lambda (rc)
 		  (let* ((help-topic "hitlist")
 			 (arid (get-from-qstr rc "arid"))
