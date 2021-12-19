@@ -7,8 +7,9 @@
 )
  ;; Put whatever you want to be called before server initilization here
  
- (add-to-load-path "/home/mbc/projects/limsn")
+;; (add-to-load-path "/home/mbc/projects/limsn")
 ;; (add-to-load-path "/home/admin/limsn")
+ (add-to-load-path "/limsn")
 
 (conf-set! 'maxnumplates 110)
 
