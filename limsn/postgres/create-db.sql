@@ -1239,8 +1239,10 @@ INSERT INTO plate_layout (SELECT source_id AS "plate_layout_name_id", well_by_co
 
 --insert destinations
 FOR i IN 1..5 loop
-INSERT INTO plate_layout_name ( descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ( dest_layout_descr[i], dest_format, 1, 1, edge, n_controls, n_unknowns, control_location, 'dest') RETURNING ID INTO dest_id;
+
+INSERT INTO plate_layout_name (name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ( source_name, dest_layout_descr[i], dest_format, 1, 1, edge, n_controls, n_unknowns, control_location, 'dest') RETURNING ID INTO dest_id;
  UPDATE plate_layout_name SET sys_name = 'LYT-'|| dest_id WHERE id=dest_id;
+
 
 INSERT INTO plate_layout (SELECT dest_id AS "plate_layout_name_id", well_numbers.by_col AS "well_by_col", import_plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM well_numbers, import_plate_layout, plate_layout WHERE well_numbers.plate_format = dest_format AND import_plate_layout.well_by_col=well_numbers.parent_well AND plate_layout.plate_layout_name_id=dest_layout_ids[i] AND plate_layout.well_by_col=well_numbers.by_col);
 

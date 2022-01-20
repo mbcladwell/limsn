@@ -140,7 +140,8 @@
 
 
 (layout-define select
-	       (options 
+	       (options
+		#:conn #t 
 		#:cookies '(names prjid sid))
 	       (lambda (rc)
 		 (let* ((help-topic "layouts")
