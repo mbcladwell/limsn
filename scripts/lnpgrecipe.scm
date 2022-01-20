@@ -18,12 +18,7 @@
 (package
   (name "lnpg")
   (version "0.1")
-   (source (origin
-              (method url-fetch)
-              (uri "https://github.com/mbcladwell/lnpg/releases/download/v01/lnpg-0.1.tar.gz")
-              (sha256
-               (base32
-                "0mh8b7c5nywfzwpsp3b32kkipqzncz8da47i6isqy72k4xndysbd"))))
+  (source "./lnpg-0.1.tar.gz")
   (build-system gnu-build-system)
   (arguments `(#:tests? #false ; there are none
 			#:phases (modify-phases %standard-phases
@@ -77,5 +72,4 @@
   (description "")
   (home-page "www.labsolns.com")
   (license license:gpl3+))
-
 

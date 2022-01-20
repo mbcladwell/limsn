@@ -29,7 +29,7 @@
               (uri (string-append "mirror://gnu/artanis/artanis-0.5.tar.gz"))
               (sha256
                (base32
-                "1vk1kp2xhz35xa5n27cxlq9c88wk6qm7fqaac8rb0pb6k9pvsv7v"))
+                "0qn85c11r6x8kxmwm5rinw1fjbv82vmanfp2gl2a7c4sb4mzjlmn"))
               (modules '((guix build utils)))
               (snippet
                '(begin
