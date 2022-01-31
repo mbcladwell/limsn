@@ -11,7 +11,7 @@
 ;; (add-to-load-path "/home/admin/limsn")
  (add-to-load-path "/limsn")
 
-(conf-set! 'maxnumplates 110)
+(conf-set! 'maxnumplates 100)
 
  (init-server)
 
