@@ -1,4 +1,16 @@
 (define-module (labsolns artass)
+  #:use-module (artanis artanis)
+  #:use-module (artanis utils)
+  #:use-module (artanis config)
+  #:use-module (artanis irregex)
+  #:use-module (artanis env) ;;provides current-toplevel
+  #:use-module (ice-9 local-eval)
+  #:use-module (srfi srfi-1)
+  #:use-module (dbi dbi)
+  #:use-module (ice-9 textual-ports)
+  #:use-module (ice-9 rdelim)
+  #:use-module (rnrs bytevectors)
+  #:use-module (web uri)
   #:export (get-rand-file-name
 	    sid
 	    get-salt
@@ -42,9 +54,6 @@
 	    update-prjid
 	    ))
 
-(use-modules (artanis artanis)(artanis utils)(artanis config) (ice-9 local-eval) (srfi srfi-1)
-             (artanis irregex)(dbi dbi) (ice-9 textual-ports)(ice-9 rdelim)
-	     (rnrs bytevectors)(web uri))
 
 ;; artanis config: /etc/artanis/artanis.conf
 ;; pgbouncer -d ./syncd/pgbouncer.ini
@@ -76,7 +85,7 @@
 (define browse-history '())
 
 (define (get-rand-file-name pre suff)
-  (string-append "tmp/" pre "-" (number->string (random 10000000000000000000000)) "." suff))
+  (string-append   pre "-" (number->string (random 10000000000000000000000)) "." suff))
 
 ;; artanis result-ref only works with strings
 ;; get a numeric by column and convert to string
