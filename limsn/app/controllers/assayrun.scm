@@ -6,7 +6,7 @@
 (use-modules (artanis utils)(artanis irregex)(srfi srfi-1)(dbi dbi)
 	     (labsolns artass)(rnrs bytevectors)(ice-9 popen)
 	     (ice-9 textual-ports)(ice-9 rdelim)(web uri)
-	     (labsolns gplot))
+	     (labsolns gplot)(ice-9 pretty-print))
  
 (define (prep-ar-for-g a)
   ;; 1 'unknown' ? 0x000000  black
@@ -121,7 +121,7 @@
 
 
 
-
+;;uses svg output
 (assayrun-define getarid
 		 (options #:conn #t #:cookies '(names id infile infile2 response threshold body))
 		 (lambda (rc)
@@ -130,7 +130,7 @@
 			  (arid   (get-from-qstr rc "arid"))
 			  (sid (:cookies-value rc "sid"))
 			  (prjid (get-prjid rc sid))
-			  ;;(outfile (string-append "pub/" (get-rand-file-name "ar" "png")))			  
+			  (outfile (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "script" "txt")))			  
 			  (response "1")
 			  (metric "3")			  
 			  (threshold (cdaar (DB-get-all-rows (:conn rc  (get-threshold-value-sql response metric arid )))))
@@ -145,9 +145,9 @@
 			  (hits-tbl-sql (get-hits-table-sql response thresholdstr arid))
 			  (holder3 (DB-get-all-rows (:conn rc (get-hits-table-sql response thresholdstr arid))))
 			  (num-hits (number->string (length holder3)))
-			  (outfile2 (make-scatter-plot-svg response metric threshold nrows num-hits data-body ))	  	
- 			  (;;dummy (make-scatter-plot outfile response metric threshold nrows num-hits data-body ))	  	
- 			  ;;(outfile2 (string-append "\"" outfile "\""))
+			  (outfile2 (make-scatter-plot-svg outfile response metric threshold nrows num-hits data-body ))	  	
+ 			 ;; (dummy (make-scatter-plot outfile response metric threshold nrows num-hits data-body ))	  	
+ 			 ;; (outfile2 (string-append "\"file:///" outfile "\""))
 			  (hit-lists (get-hit-lists-for-arid arid rc))	
 			  (hit-lists-encode (if  (equal? "" hit-lists) #f (htmlify hit-lists)))
 			  (aridq (addquotes arid))  ;; for passing to html
@@ -159,6 +159,46 @@
 			  )
 		    ;;  (view-render "test" (the-environment)))))
 		     (view-render "getarid" (the-environment)))))
+
+
+;;uses file output
+;; (assayrun-define getarid
+;; 		 (options #:conn #t #:cookies '(names id infile infile2 response threshold body))
+;; 		 (lambda (rc)
+;; 		   (let* (
+;; 			  (help-topic "assayrun")
+;; 			  (arid   (get-from-qstr rc "arid"))
+;; 			  (sid (:cookies-value rc "sid"))
+;; 			  (prjid (get-prjid rc sid))
+;; 			  (outfile (string-append "../../../../../../../../../var/tmp/" (get-rand-file-name "ar" "png")))			  
+;; 			  (response "1")
+;; 			  (metric "3")			  
+;; 			  (threshold (cdaar (DB-get-all-rows (:conn rc  (get-threshold-value-sql response metric arid )))))
+;; 			  (thresholdstr (number->string threshold))
+;; 			  (sql (string-append "select assay_run.id, assay_run.assay_run_sys_name, assay_run.assay_run_name, assay_run.descr, assay_type.assay_type_name, plate_layout_name.sys_name, plate_layout_name.name FROM assay_run, assay_type, plate_layout_name WHERE assay_run.plate_layout_name_id=plate_layout_name.id AND assay_run.assay_type_id=assay_type.id AND assay_run.id =" arid ))
+;; 			  (holder (DB-get-all-rows (:conn rc sql)))
+;; 			  (body (string-concatenate (prep-ar-rows-no-link holder))) ;; this is the top descriptive table
+;; 			  (body-encode (htmlify body))	
+;; 			  (holder2 (DB-get-all-rows (:conn rc (get-main-data-table-sql response arid))))
+;; 			  (nrows (length holder2))
+;; 			  (data-body  (string-concatenate (prep-ar-for-g holder2)))
+;; 			  (hits-tbl-sql (get-hits-table-sql response thresholdstr arid))
+;; 			  (holder3 (DB-get-all-rows (:conn rc (get-hits-table-sql response thresholdstr arid))))
+;; 			  (num-hits (number->string (length holder3)))
+;; 			 ;; (outfile2 (make-scatter-plot-svg response metric threshold nrows num-hits data-body ))	  	
+;;  			  (dummy (make-scatter-plot outfile response metric threshold nrows num-hits data-body ))	  	
+;;  			  (outfile2 (string-append "\"file:///" outfile "\""))
+;; 			  (hit-lists (get-hit-lists-for-arid arid rc))	
+;; 			  (hit-lists-encode (if  (equal? "" hit-lists) #f (htmlify hit-lists)))
+;; 			  (aridq (addquotes arid))  ;; for passing to html
+;; 			  (responseq (addquotes response))
+;; 			  (thresholdq (addquotes thresholdstr))
+;; 			  (metricq (addquotes metric))
+;; 			  (body-encodeq (addquotes body-encode))
+;; 			  (hit-lists-encodeq (if hit-lists-encode (addquotes  hit-lists-encode) #f))
+;; 			  )
+;; 		    ;;  (view-render "test" (the-environment)))))
+;; 		     (view-render "getarid" (the-environment)))))
 
 
 
@@ -194,7 +234,8 @@
 			  (sid (:cookies-value rc "sid"))
 			  (prjid (get-prjid rc sid))
 			  (arid  (stripfix (:from-post rc 'get-vals "arid")))
-			  (outfile (get-rand-file-name "ar" "png"))	 
+			  ;;(outfile (get-rand-file-name "ar" "png"))
+			  (outfile (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "script" "txt")))			  
 			  (body-encode   (uri-decode (:from-post rc 'get-vals "bodyencode"))) ;;body of the ar table
 			  (body (dehtmlify body-encode))
 			  (hit-lists-encode (uri-decode (:from-post rc 'get-vals "hitlistsencode")))
@@ -212,8 +253,9 @@
 			  (data-body  (string-concatenate (prep-ar-for-g holder2)))
 			  (holder3 (DB-get-all-rows (:conn rc (get-hits-table-sql response thresholdstr arid))))
 			  (num-hits (number->string (length holder3)))
-			  (dummy (make-scatter-plot outfile response metric threshold nrows num-hits data-body ))			  				 
-			  (outfile2 (string-append "\"../" outfile "\""))
+			  ;;(dummy (make-scatter-plot outfile response metric threshold nrows num-hits data-body ))
+			  (outfile2 (make-scatter-plot-svg outfile response metric threshold nrows num-hits data-body ))	  	
+			  ;;(outfile2 (string-append "\"../" outfile "\""))
 			  (aridq (addquotes arid))  ;; for passing to html
 			  (responseq (addquotes response)) ;;needed for view hits but will change with replot
 			  (thresholdq (addquotes thresholdstr))  ;; "
@@ -369,62 +411,6 @@
 
 
 
-;; (define (get-data-for-assayrun id data-file-name)
-;;   (let* ((data-file data-file-name)
-;; 	 (p  (open-output-file data-file)))
-;;     (put-string p (get-assayrun-table-for-r id) )
-;;     (force-output p)
-;;     ))
-
-
-
-;; (define (get-assayrun-stats-for-r id data-file-name rc)
-;;   (let* ((table-header (string-append "response.type\tmax.response\tmin.response\tmean.bkgrnd\tstd.dev.bkgrnd\t mean.pos\t stdev.pos\tmean.neg.3.sd\tmean.neg.2.sd\tmean.pos.3.sd\t mean.pos.2.sd\n"))
-;; 	(holder (DB-get-all-rows (:conn rc  (string-append "select response_type,  max_response, min_response, mean_bkgrnd, std_dev_bkgrnd,  mean_pos,  stdev_pos, mean_neg_3_sd, mean_neg_2_sd, mean_pos_3_sd,  mean_pos_2_sd from assay_run_stats where assay_run_id=" id))))
-;; 	(body (string-append table-header (string-concatenate (prep-ar-stats-for-r holder))))
-;; 	(p  (open-output-file data-file-name)))
-;;     (begin
-;;       (put-string p body)
-;;       (force-output p))))
-
-
-;; (define (prep-ar-for-r a)
-;;   (fold (lambda (x prev)
-;;           (let* ((assay-run-id (get-c1 x))	
-;; 		 (plate-order (get-c2 x))
-;; 		 (well (get-c3 x ))
-;; 		 (response (get-c4 x ))
-;; 		 (bkgrnd-sub (get-c5 x))
-;; 		 (norm (get-c6 x ))
-;; 		 (norm-pos (get-c7 x ))
-;; 		 (p-enhance (get-c8 x ))
-;; 		 (type (get-c9 x))
-;; 		 (reps (get-c10 x ))
-;; 		 (trg (get-c11 x ))
-;; 		 (splid (get-c12 x ))
-;; 		 )
-;;             (cons (string-append  assay-run-id "\t" plate-order "\t" well "\t" response "\t" bkgrnd-sub "\t" norm "\t" norm-pos "\t" p-enhance "\t" type "\t" reps "\t" trg "\t" splid "\n")
-;; 		  prev)))
-;;         '() a))
-
-
-;; (define (prep-ar-stats-for-r a)
-;;   (fold (lambda (x prev)
-;;           (let* ((response-type (get-c1 x))	
-;; 		 (max-response (get-c2 x))
-;; 		 (min-response (get-c3 x ))
-;; 		 (mean-bkgrnd (get-c4 x ))
-;; 		 (std-dev-bkgrnd (get-c5 x))
-;; 		 (mean-pos (get-c6 x ))
-;; 		 (stdev-pos (get-c7 x ))
-;; 		 (mean-neg-3-sd (get-c8 x ))
-;; 		 (mean-neg-2-sd (get-c9 x ))
-;; 		 (mean-pos-3-sd (get-c10 x ))
-;; 		 (mean-pos-2-sd (get-c11 x ))
-;; 		 )
-;;             (cons (string-append "\t" response-type "\t"  max-response "\t" min-response "\t" mean-bkgrnd "\t" std-dev-bkgrnd "\t"  mean-pos "\t"  stdev-pos "\t" mean-neg-3-sd "\t" mean-neg-2-sd "\t" mean-pos-3-sd "\t"  mean-pos-2-sd "\n")
-;; 		  prev)))
-;;         '() a))
 
 ;; SELECT * FROM get_scatter_plot_data(?);
 

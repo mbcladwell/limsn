@@ -33,7 +33,7 @@
     <tbody><%= body %></tbody>
   </table>
 <div class="row">
-<img src=<%= outfile2 %> align="left">
+<%= outfile2 %>
 </div>
 <form action="replot" method="POST" >
 

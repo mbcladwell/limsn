@@ -85,7 +85,7 @@
 (define browse-history '())
 
 (define (get-rand-file-name pre suff)
-  (string-append   pre "-" (number->string (random 10000000000000000000000)) "." suff))
+  (string-append pre "-" (number->string (random 10000000000000000000000)) "." suff))
 
 ;; artanis result-ref only works with strings
 ;; get a numeric by column and convert to string

@@ -14,6 +14,7 @@
   #:use-module (rnrs bytevectors)
   #:use-module (web uri)
   #:use-module (labsolns artass)
+  #:use-module (ice-9 pretty-print)
   #:export (
 	    ns-lst
 	    tef-lst
@@ -55,12 +56,12 @@
 			(4 . "0x969696")   ;;blank grey
 			(5 . "0x33FFFF"))) ;;edge light blue
 
-(define (get-svg-content gnuplot-script)
+(define (get-svg-content gnuplot-script-file)
   ;;requires:   set terminal svg size 600,400
   ;;            save '-'
   ;;in the script
   ;;gnuplot-script is the script as a text variable
-  (let* ((port (open-input-pipe (string-append "gnuplot " gnuplot-script)))
+  (let* ((port (open-input-pipe (string-append "gnuplot " gnuplot-script-file)))
 	 (a "")	 
 	 (dummy (let loop ((line (read-line port)))
 		  (if (not (eof-object? line))
@@ -68,6 +69,7 @@
 			(set! a (string-append a line))
 			(loop (read-line port))))))	 	 
 	 (dummy (close-pipe port))
+	 (dummy (pretty-print a))
 	 (coord-start (string-match "<svg  width=" a ))
 	 (coord-end (string-match "</g></svg>" a)))
     (xsubstring a (match:start coord-start) (match:end coord-end))
@@ -102,7 +104,7 @@
 	 (hit-num-text-x (number->string (* nrows 0.08)))
 	 (hit-num-text-y (if (equal? response "3") "5" (number->string (+ threshold (* threshold 0.06)))))
 	 (thresholdstr (number->string threshold))
-	 (gplot-script (get-gplot-scatter-script outfile y-label thresholdstr xmax hit-num-text hit-num-text-x hit-num-text-y metric-text metric-text-x metric-text-y data-body))
+	 (gplot-script (get-gplot-scatter-script outfile y-label thresholdstr xmax hit-num-text hit-num-text-x hit-num-text-y metric-text-x metric-text-y data-body))
 	 ;; (p  (open-output-file (get-rand-file-name "script" "txt")))
 	 ;; (dummy (begin
 	 ;; 	  (put-string p gplot-script )
@@ -115,7 +117,7 @@
     )) 
 
 
-(define (make-scatter-plot-svg response metric threshold nrows num-hits data-body )
+(define (make-scatter-plot-svg outfile response metric threshold nrows num-hits data-body )
   ;; Threshold  called metric below x,y are coordinates for printing
   ;; nrows number of data points to plot
   ;; num-hits given the threshold
@@ -137,17 +139,44 @@
 	 (hit-num-text-y (if (equal? response "3") "5" (number->string (+ threshold (* threshold 0.06)))))
 	 (thresholdstr (number->string threshold))
 	 (gplot-script (get-gplot-scatter-script y-label thresholdstr xmax hit-num-text hit-num-text-x hit-num-text-y metric-text metric-text-x metric-text-y data-body))
+	 (p  (open-output-file outfile))
+	  (dummy (begin
+	  	  (put-string p gplot-script )
+	 	  (force-output p)))
 	 )
-    (get-svg-content gplot-script)
+    (get-svg-content outfile)
     )) 
 
 ;;uses svg method
-;; (define (get-gplot-scatter-script  ylabel threshold xmax hit-num-text hit-num-text-x hit-num-text-y metric-text metric-text-x metric-text-y data)
+(define (get-gplot-scatter-script  ylabel threshold xmax hit-num-text hit-num-text-x hit-num-text-y metric-text metric-text-x metric-text-y data)
+  ;;xmax is 100 for 96 well plates, 385 for 384 well plate etc
+  ;; hit-num-text e.g. 38 hits
+  ;; metric-text e.g. Norm + 3SD
+  (let* (
+	 (str1 "reset session\nset terminal svg size 800,500\nsave '-' ")
+	 (str2 "\nset key box ins vert right top\nset grid\nset arrow 1 nohead from 0,")
+	 (str3 " to ")
+	 (str4 ", ")
+	 (str5 " linewidth 1 dashtype 2\nset xlabel \"Index\"\nset ylabel \"")	       
+	 (str6 "\"\nset label '")
+	 (str7 "' at ")
+	 (str8 ",")
+	 (str9 "\nset label '")
+	 (str10 "' at ")
+	 (str11 ",")
+	 (str12 "\nplot '-' using 1:2:3 notitle with points pt 2 lc rgbcolor variable, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\"\n")
+	 (str13 "e"))   
+   (string-append str1 str2 threshold str3 xmax str4 threshold str5 ylabel str6  hit-num-text str7 hit-num-text-x str8 hit-num-text-y str9 metric-text str10 metric-text-x str11 metric-text-y str12 data str13 ) ))
+
+	 
+    
+;; old method using text files on disk
+;; (define (get-gplot-scatter-script out-file ylabel threshold xmax hit-num-text hit-num-text-x hit-num-text-y metric-text metric-text-x metric-text-y data)
 ;;   ;;xmax is 100 for 96 well plates, 385 for 384 well plate etc
 ;;   ;; hit-num-text e.g. 38 hits
 ;;   ;; metric-text e.g. Norm + 3SD
 ;;   (let* (
-;; 	 (str1 "reset session\nset terminal svg size 800,500\nsave '-' ")
+;; 	 (str1 "reset session\nset terminal pngcairo size 800,500\nset output '")
 ;; 	 (str2 "'\nset key box ins vert right top\nset grid\nset arrow 1 nohead from 0,")
 ;; 	 (str3 " to ")
 ;; 	 (str4 ", ")
@@ -160,29 +189,7 @@
 ;; 	 (str11 ",")
 ;; 	 (str12 "\nplot '-' using 1:2:3 notitle with points pt 2 lc rgbcolor variable, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\"\n")
 ;; 	 (str13 "e"))   
-;;    (string-append str1 str2 threshold str3 xmax str4 threshold str5 ylabel str6  hit-num-text str7 hit-num-text-x str8 hit-num-text-y str9 metric-text str10 metric-text-x str11 metric-text-y str12 data str13 ) ))
-
-;; old method using text files on disk
-(define (get-gplot-scatter-script out-file ylabel threshold xmax hit-num-text hit-num-text-x hit-num-text-y metric-text metric-text-x metric-text-y data)
-  ;;xmax is 100 for 96 well plates, 385 for 384 well plate etc
-  ;; hit-num-text e.g. 38 hits
-  ;; metric-text e.g. Norm + 3SD
-  (let* (
-	 (str1 "reset session\nset terminal pngcairo size 800,500\nset output '")
-	 (str2 "'\nset key box ins vert right top\nset grid\nset arrow 1 nohead from 0,")
-	 (str3 " to ")
-	 (str4 ", ")
-	 (str5 " linewidth 1 dashtype 2\nset xlabel \"Index\"\nset ylabel \"")	       
-	 (str6 "\"\nset label '")
-	 (str7 "' at ")
-	 (str8 ",")
-	 (str9 "\nset label '")
-	 (str10 "' at ")
-	 (str11 ",")
-	 (str12 "\nplot '-' using 1:2:3 notitle with points pt 2 lc rgbcolor variable, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\"\n")
-	 (str13 "e"))   
-   (string-append str1  out-file str2 threshold str3 xmax str4 threshold str5 ylabel str6  hit-num-text str7 hit-num-text-x str8 hit-num-text-y str9 metric-text str10 metric-text-x str11 metric-text-y str12 data str13 ) ))
-
+;;    (string-append str1  out-file str2 threshold str3 xmax str4 threshold str5 ylabel str6  hit-num-text str7 hit-num-text-x str8 hit-num-text-y str9 metric-text str10 metric-text-x str11 metric-text-y str12 data str13 ) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
