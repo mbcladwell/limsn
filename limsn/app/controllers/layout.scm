@@ -236,8 +236,7 @@
    (lambda (rc)
      (let* ((help-topic "layouts")
 	    (sid (:cookies-value rc "sid"))
-	    (prjid (get-prjid rc sid))
-	   
+	    (prjid (get-prjid rc sid))	   
 	    (infile (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "lyt" "txt"))) ;;do not incorporate the "pub" here because the html
 	    (spl-out  (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "lyt" "txt"))) ;; does not want the pub
 	    (a (uri-decode (:from-post rc 'get-vals "datatransfer")))
@@ -351,29 +350,32 @@
 			(spl-rep-out (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "lyt" "txt")))
 			(trg-rep-out (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "lyt" "txt")))	 
 			(format (get-format-for-layout-id lytid rc))
-			(sql (string-append "SELECT source_dest FROM plate_layout_name WHERE id=" lytid))
+			(sql (string-append "SELECT source_dest FROM plate_layout_name WHERE id=" lytid));;determine if source or dest
 			(srcdest (assoc-ref (car (DB-get-all-rows (:conn rc sql))) "source_dest"))
 			(sql (if (equal? srcdest "source")
-				 (string-append "select dest from layout_source_dest where src =" lytid)
-				 (string-append "select dest from layout_source_dest where src =(select src from layout_source_dest where dest = " lytid ") UNION select src from layout_source_dest where dest =" lytid " ORDER BY dest")))
+				 (string-append "select dest from layout_source_dest where src =" lytid);;will get the 5 dest ids
+				 (string-append "select dest from layout_source_dest where src =(select src from layout_source_dest where dest = " lytid ") UNION select src from layout_source_dest where dest =" lytid " ORDER BY dest")));;will get all 6 ids
 					
 			(holder (map cdar (DB-get-all-rows (:conn rc sql))))
-			(allids (if (equal? srcdest "source")
+			(allids (if (equal? srcdest "source")            ;;if it was the source, add on the source id which was not originally collected
 				    (cons (string->number lytid) holder)
-				    holder))
+				    holder))                             ;;otherwise just return all 6 ids in order
 			(allidsstring (map number->string allids))
 			(allidscomma (add-comma allidsstring ""))
-			(sql (string-append "select id, sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest from plate_layout_name where id IN (" allidscomma ") ORDER BY source_dest DESC"))
+			(sql (string-append "select id, sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest from plate_layout_name where id IN (" allidscomma ") ORDER BY source_dest DESC"));;get the description of each id
 			(holder  (DB-get-all-rows (:conn rc sql)))
 			(body (string-concatenate (prep-lyt-rows holder)))
 			;;gnuplot stuff starts here
 			(sql (string-append "select  row_num, col, well_type_id, plate_layout.replicates, plate_layout.target from plate_layout_name, plate_layout, well_numbers where plate_layout.well_by_col=well_numbers.by_col and plate_layout.plate_layout_name_id = plate_layout_name.id and well_numbers.plate_format=plate_layout_name.plate_format_id AND plate_layout.plate_layout_name_id =" lytid))
 			(holder (DB-get-all-rows(:conn rc sql) ))
 			(data-body (string-concatenate (prep-lyt-for-g holder format)))
-			(dummy (make-layout-plot spl-out spl-rep-out trg-rep-out data-body lytid format))					
-			 (spl-out2 (string-append "\"../" spl-out "\"" ))
-			 (spl-rep-out2 (string-append "\"../" spl-rep-out "\""))
-			 (trg-rep-out2  (string-append "\"../" trg-rep-out "\""))
+			;;(dummy (make-layout-plot spl-out spl-rep-out trg-rep-out data-body lytid format))
+			(spl-out2 (make-layout-plot-spl-out spl-out data-body lytid format))
+			(spl-rep-out2 (make-layout-plot-spl-rep-out spl-rep-out data-body lytid format))
+			(trg-rep-out2 (make-layout-plot-trg-rep-out trg-rep-out data-body lytid format))
+			 ;;(spl-out2 (string-append "\"../" spl-out "\"" ))
+			 ;;(spl-rep-out2 (string-append "\"../" spl-rep-out "\""))
+			 ;;(trg-rep-out2  (string-append "\"../" trg-rep-out "\""))
 			)
 		   (view-render "lytbyid" (the-environment))
 		 ;;  (view-render "test" (the-environment))
