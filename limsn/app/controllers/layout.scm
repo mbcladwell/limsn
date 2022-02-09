@@ -238,10 +238,8 @@
 	    (sid (:cookies-value rc "sid"))
 	    (prjid (get-prjid rc sid))
 	   
-	    (infile (get-rand-file-name "lyt" "txt")) ;;do not incorporate the "pub" here because the html
-	   (spl-out  (get-rand-file-name "lyt" "png")) ;; does not want the pub
-	   ; (spl-out2 (string-append "\"" spl-out "\""))
-	   ;; (cookies  (rc-cookie rc))
+	    (infile (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "lyt" "txt"))) ;;do not incorporate the "pub" here because the html
+	    (spl-out  (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "lyt" "txt"))) ;; does not want the pub
 	    (a (uri-decode (:from-post rc 'get-vals "datatransfer")))
 	    (b (map list (cdr (string-split a #\newline))))
 	    (c (filter-empty b '()))
@@ -255,7 +253,7 @@
 	    (ncontrols (+ n2 n3 n4))
 	    (format (:from-post rc 'get-vals "format2"))
 
-	    (file-port (open-output-file (string-append "pub/" infile)))
+	    (file-port (open-output-file  infile))
 	    (dummy (display a file-port))
 	    (dummy2 (force-output file-port))
 	   ;; (dummy (system (string-append "Rscript --vanilla rscripts/plot-review-layout.R pub/" infile " pub/" spl-out " " format )))
@@ -268,9 +266,9 @@
 	    (well-nums (DB-get-all-rows(:conn rc sql) ))	    	  
 	    (data-body (prep-datatransfer c well-nums format ""))
 
-	    (dummy (make-layout-preview-plot spl-out data-body format))
+	    (spl-out2 (get-layout-preview-plot-svg spl-out data-body format))
 
-	    (spl-out2 (string-append "\"../" spl-out "\"" ))
+	   ;; (spl-out2 (string-append "\"../" spl-out "\"" ))
 
 	    )
     (view-render "viewlayout" (the-environment))

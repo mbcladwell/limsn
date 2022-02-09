@@ -11,7 +11,7 @@
   
   <p><h3>Sample Layout</h3></p>
  
-  <image src= <%= spl-out2 %>>
+  <%= spl-out2 %>
     
     <form action="updatedb" method="POST">
       <div class="form-row">

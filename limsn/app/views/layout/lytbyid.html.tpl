@@ -11,14 +11,14 @@
 </table>
 
 <p><h3>Sample Layout</h3></p>
-<p><img src=<%= spl-out2 %>></p>
+<p><%= spl-out2 %></p>
 <p><h3>Sample Replication</h3></p>
 
-<p><img src=<%= spl-rep-out2 %>></p>
+<p><%= spl-rep-out2 %></p>
 
 <p><h3>Target Replication</h3></p>
 
-<p><img src=<%= trg-rep-out2 %>><p>
+<p><%= trg-rep-out2 %><p>
 </div>
 
 

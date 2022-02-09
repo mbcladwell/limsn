@@ -26,7 +26,7 @@
 	    get-spl-color
 	    make-scatter-plot-svg
 	    make-layout-plot
-	    make-layout-preview-plot
+	    get-layout-preview-plot-svg
 	    prep-lyt-for-g
 	    ))
 
@@ -272,7 +272,7 @@
      ;; (force-output p))   
     )) 
 
-(define (make-layout-preview-plot spl-out data-body format)
+(define (get-layout-preview-plot-svg spl-out data-body format)
 ;; Threshold  called metric below x,y are coordinates for printing
   ;; outfile: .png filename
   ;; nrows number of data points to plot
@@ -290,16 +290,77 @@
 		     ((equal? format "384") "2")
 		     ((equal? format "1536") "1")
 		     ))	 
-	 (gplot-script   (string-append "reset session\n$Data <<EOD\n" data-body "EOD\nset terminal pngcairo size 600,350\nset output 'pub/" spl-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 1:2:4:ytic(3) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\", NaN with points pt 20  lc rgb 0x33FFFF title \"edge\"\n"))
-;;	 (p  (open-output-file (get-rand-file-name "script" "txt")))
-	 
-	 (port (open-output-pipe "gnuplot"))
+	 (gplot-script   (string-append "reset session\n$Data <<EOD\n" data-body "EOD\nset terminal svg size 600,350\nsave '-'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 1:2:4:ytic(3) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\", NaN with points pt 20  lc rgb 0x33FFFF title \"edge\"\n"))
+	 (p  (open-output-file spl-out))
+	 (dummy (begin
+	  	  (put-string p gplot-script )
+	 	  (force-output p)))
 	 )
-    (begin
-      (display gplot-script port)
-      (close-pipe port))
-   ;; (begin
-     ;; (put-string p gplot-script )
-     ;; (force-output p))   
+    (get-svg-content spl-out)
     )) 
+
+;;below is pre svg, files only OLD
+
+;; (define (make-layout-plot spl-out spl-rep-out trg-rep-out data-body arid format)
+;; ;; Threshold  called metric below x,y are coordinates for printing
+;;   ;; outfile: .png filename
+;;   ;; nrows number of data points to plot
+;;   ;; num-hits given the threshold
+;;   ;; threshold must be a number
+;;   (let* ((xmax (cond ((equal? format "96")  "13")
+;; 		     ((equal? format "384") "25")
+;; 		     ((equal? format "1536") "49")
+;; 		     ))	 
+;; 	 (ymax (cond ((equal? format "96")  "9")
+;; 		     ((equal? format "384") "17")
+;; 		     ((equal? format "1536") "33")
+;; 		     ))
+;; 	 (ptsize (cond ((equal? format "96")  "3")
+;; 		     ((equal? format "384") "2")
+;; 		     ((equal? format "1536") "1")
+;; 		     ))
+	 
+;; 	 (gplot-script   (string-append "reset session\n$Data <<EOD\n" data-body "EOD\nset terminal pngcairo size 600,350\nset output 'pub/" spl-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:5:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\", NaN with points pt 20  lc rgb 0x33FFFF title \"edge\"\nset output 'pub/" spl-rep-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:6:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb 0x000000 title \"plate1\", NaN with points pt 20 lc rgb 0xFFFFFF title \"plate2\", NaN with points pt 20 lc rgb 0x0000FF title \"plate3\", NaN with points pt 20  lc rgb 0x33FFFF title \"plate4\"\nset output 'pub/" trg-rep-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 3:2:7:ytic(4) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb 0x000000 title \"target1\", NaN with points pt 20 lc rgb 0xFFFFFF title \"target2\", NaN with points pt 20 lc rgb 0x0000FF title \"target3\", NaN with points pt 20  lc rgb 0x33FFFF title \"target4\""))
+;; ;;	 (p  (open-output-file (get-rand-file-name "script" "txt")))
+    	 
+;; 	 (port (open-output-pipe "gnuplot"))
+;; 	 )
+;;     (begin
+;;       (display gplot-script port)
+;;       (close-pipe port))
+;;    ;; (begin
+;;      ;; (put-string p gplot-script )
+;;      ;; (force-output p))   
+;;     )) 
+
+;; (define (make-layout-preview-plot spl-out data-body format)
+;; ;; Threshold  called metric below x,y are coordinates for printing
+;;   ;; outfile: .png filename
+;;   ;; nrows number of data points to plot
+;;   ;; num-hits given the threshold
+;;   ;; threshold must be a number
+;;   (let* ((xmax (cond ((equal? format "96")  "13")
+;; 		     ((equal? format "384") "25")
+;; 		     ((equal? format "1536") "49")
+;; 		     ))	 
+;; 	 (ymax (cond ((equal? format "96")  "9")
+;; 		     ((equal? format "384") "17")
+;; 		     ((equal? format "1536") "33")
+;; 		     ))
+;; 	 (ptsize (cond ((equal? format "96")  "3")
+;; 		     ((equal? format "384") "2")
+;; 		     ((equal? format "1536") "1")
+;; 		     ))	 
+;; 	 (gplot-script   (string-append "reset session\n$Data <<EOD\n" data-body "EOD\nset terminal pngcairo size 600,350\nset output 'pub/" spl-out "'\nset key box outs vert right center\nset xrange [0:" xmax  "]\nset yrange [0:" ymax "]\nset x2tics\nset x2label \"Columns\"\nset ylabel \"Rows\"\nunset xtics\nset xtics format \" \"\nplot $Data using 1:2:4:ytic(3) notitle with points ps " ptsize " lc rgbcolor variable pt 20, NaN with points pt 20 lc rgb \"green\" title \"pos\", NaN with points pt 20 lc rgb \"red\" title \"neg\", NaN with points pt 20 lc rgb \"black\" title \"unk\", NaN with points pt 20  lc rgb \"grey\" title \"blank\", NaN with points pt 20  lc rgb 0x33FFFF title \"edge\"\n"))
+;; ;;	 (p  (open-output-file (get-rand-file-name "script" "txt")))
+	 
+;; 	 (port (open-output-pipe "gnuplot"))
+;; 	 )
+;;     (begin
+;;       (display gplot-script port)
+;;       (close-pipe port))
+;;    ;; (begin
+;;      ;; (put-string p gplot-script )
+;;      ;; (force-output p))   
+;;     )) 
 
