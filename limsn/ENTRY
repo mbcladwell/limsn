@@ -3,7 +3,7 @@
  (use-modules (artanis artanis)
               ;; Put modules you want to be imported here
               ;; only for this file, not controllers/views
-	      (artanis config)
+	      ;;(artanis config)
 )
  ;; Put whatever you want to be called before server initilization here
  
@@ -12,7 +12,7 @@
 ;; (add-to-load-path "/home/admin/limsn")
  (add-to-load-path "abcdefgh/limsn")
 
-(conf-set! 'maxnumplates 100)
+;;(conf-set! 'maxplates 100)
 
  (init-server)
 

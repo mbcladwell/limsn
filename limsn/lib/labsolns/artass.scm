@@ -17,7 +17,7 @@
 	    my-hmac
 	    nopwd-conn
 	    ln-version
-	    maxnumplates
+	    maxplates
 	    process-pg-row-element
 	    process-list-of-rows
 	    get-c1
@@ -65,7 +65,8 @@
 ;; https://github.com/UMCUGenetics/guix-documentation/blob/master/for-bioinformaticians/guix-for-bioinformaticians.md
 
 (define ln-version "0.1.0-061621")
-(define maxnumplates (get-conf  'maxnumplates))
+;;(define maxplates (get-conf  'maxplates)) ;;when using ENTRY
+(define maxplates (get-conf '(cookie maxplates))) ;;when using artanis.conf
 
 
 ;; (if (access? properties-filename R_OK)

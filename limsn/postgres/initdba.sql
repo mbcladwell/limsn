@@ -9,11 +9,3 @@ CREATE USER ln_user   WITH PASSWORD 'welcome';
 
 GRANT ln_user TO ln_admin;
 
-CREATE DATABASE lndb;
-REVOKE ALL ON DATABASE lndb FROM public;  -- see notes below!
-
-GRANT CONNECT ON DATABASE lndb TO ln_user;  -- others inherit
-
---Must connect to lndb here see initdbb
-
-

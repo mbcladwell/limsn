@@ -35,6 +35,7 @@ SUFFIXES = .scm .go
 SOURCES = limsn/lib/labsolns/lnpg.scm \
           limsn/lib/labsolns/artass.scm \
           limsn/lib/labsolns/gplot.scm \
+          limsn/lib/run-lnpg.scm \
           limsn/app/views/plateset/addstep2.html.tpl \
           limsn/app/views/plateset/add.html.tpl \
           limsn/app/views/plateset/worklist.html.tpl \

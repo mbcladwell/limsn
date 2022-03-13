@@ -11,6 +11,7 @@
 	    init-db
 	    ))
 
+;;because this is a module you need a helper file lib/run-lnpg.scm that can be used as a script file
 
 
 (define lnpg-store-dir "abcdefgh")
@@ -44,26 +45,37 @@
 (define (create-db ln-cs)  (system (string-append "psql " ln-cs " -f " lnpg-store-dir "/scripts/create-db.sql") ))
 (define (load-eg-data ln-cs)  (system (string-append "psql " ln-cs " -f " lnpg-store-dir "/scripts/example-data.sql") ))
 
+;;  used with lndata data directory
+;; (define (init-fresh-local pg-pgdb pg-lndb)
+;;   ;;used for local installation
+;;   ;;config files used to provide unrestricted access to ln_admin
+;;   (begin
+;;     (system "export LC_ALL=\"C\"")
+;;     (system "mkdir $HOME/lndata" )
+;; 	 (system "echo \"export PGDATA=\\\"$HOME/lndata\\\"\" >> $HOME/.bashrc")
+;; 	 (system "export PGDATA=$HOME/lndata")
+;; 	 (system "initdb -D $HOME/lndata")
+;; 	 (system "sed -i 's/host[ ]*all[ ]*all[ ]*127.0.0.1\\/32[ ]*md5/host    all        all             127.0.0.1\\/32        trust/' $HOME/lndata/pg_hba.conf")
+;;          (system "sed -i 's/\\#listen_addresses =/listen_addresses =/'  $HOME/lndata/postgresql.conf")
+ 
+;; 	 (system "pg_ctl -D $HOME/lndata -l logfile start")
+;; 	 (create-users-db pg-pgdb)
+;; 	 (create-schema-search-path-roles pg-lndb)
+;; 	 ))
 
+
+;; used with standard location data directory with Debian controlling install
 (define (init-fresh-local pg-pgdb pg-lndb)
   ;;used for local installation
   ;;config files used to provide unrestricted access to ln_admin
   (begin
-    (system "export LC_ALL=\"C\"")
-    (system "mkdir $HOME/lndata" )
-	 (system "echo \"export PGDATA=\\\"$HOME/lndata\\\"\" >> $HOME/.bashrc")
-	 (system "export PGDATA=$HOME/lndata")
-	 (system "initdb -D $HOME/lndata")
-	 (system "sed -i 's/host[ ]*all[ ]*all[ ]*127.0.0.1\\/32[ ]*md5/host    all        all             127.0.0.1\\/32        trust/' $HOME/lndata/pg_hba.conf")
-         (system "sed -i 's/\\#listen_addresses =/listen_addresses =/'  $HOME/lndata/postgresql.conf")
- 
-	 ;(system (string-append "cp " lnpg-store-dir "/scripts/pg_hba.conf $HOME/lndata"))
-	 ;(system (string-append "cp " lnpg-store-dir "/scripts/pg_ident.conf $HOME/lndata"))
-	 ;(system (string-append "cp " lnpg-store-dir "/scripts/postgresql.conf $HOME/lndata"))
-	 (system "pg_ctl -D $HOME/lndata -l logfile start")
-	 (create-users-db pg-pgdb)
-	 (create-schema-search-path-roles pg-lndb)
-	 ))
+    (system "sudo service postgresql stop")
+    (system "sudo sed -i 's/host[ ]*all[ ]*all[ ]*127.0.0.1/32[ ]*md5/host    all        all             127.0.0.1/32        trust/' /etc/postgresql/11/main/pg_hba.conf")
+    (system "sudo sed -i 's/\\#listen_addresses =/listen_addresses =/'  /etc/postgresql/11/main/postgresql.conf")
+    (system "sudo service postgresql start")
+    (create-users-db pg-pgdb)
+    (create-schema-search-path-roles pg-lndb)
+    ))
 
 
 (define (refresh ln-cs)
@@ -80,6 +92,7 @@
     (load-eg-data ln-cs)))
 
 (define (init-db args)
+  ;;lnpg.sh 127.0.0.1 5432 ln_admin welcome lndb init local
   (let* (
 	 (ip (cadr args))
 	 (port (caddr args))

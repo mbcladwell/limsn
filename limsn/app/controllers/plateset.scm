@@ -279,7 +279,7 @@
 
 
 ;; old version above
-;; this version makes use of (labsolns artass) maxnumplates variable
+;; this version makes use of (labsolns artass) maxplates variable
 ;; (post  "/plateset/addstep2"
 ;;        #:conn #t
 ;;        #:cookies '(names prjid lnuser userid group sid)
@@ -290,8 +290,8 @@
 ;; 		(psdescr (uri-decode (:from-post rc 'get-vals "psdescr")))
 ;;  	;;	(numplates (:from-post rc 'get-vals "numplates"))
 ;;  		(numplates-pre (:from-post rc 'get-vals "numplates"))
-;; 		(toobig? (> (string->number numplates-pre) (string->number maxnumplates)))
-;; 		(numplates (if toobig? maxnumplates numplates-pre))		
+;; 		(toobig? (> (string->number numplates-pre) (string->number maxplates)))
+;; 		(numplates (if toobig? maxplates numplates-pre))		
 ;; 		(format (:from-post  rc 'get-vals "format"))
 ;; 		(typeid (:from-post  rc 'get-vals "type"))
 ;; 		(plttype (cond
@@ -419,9 +419,9 @@
 	       (plate-types (string-concatenate (dropdown-contents-with-id holder3 plate-types-pre)))
 	       
 	       
-	       ;; (numplates-pre (if toobig? maxnumplates numplates-pre-pre))
+	       ;; (numplates-pre (if toobig? maxplates numplates-pre-pre))
 	       
-	       (gt10? (>  maxnumplates 10))
+	       (gt10? (>  maxplates 10))
 	       (registered? (if gt10?
 				(let*(
 				      (sql "SELECT  cust_id, cust_key, cust_email FROM config WHERE id=1")
@@ -430,7 +430,7 @@
 				      (cust_key (assoc-ref ret "cust_key"))
 				      (email (assoc-ref ret "cust_email")))
 				  (if (and cust_id cust_key email ) (validate-key cust_id email cust_key) #f)) #f))
-	       (allowedplates  (if registered? (number->string maxnumplates) "10"))
+	       (allowedplates  (if registered? (number->string maxplates) "10"))
 	       (prjidq (addquotes prjid))
 	       (allowedplatesq (addquotes allowedplates))
 	       (sidq (addquotes sid)))      
@@ -488,7 +488,7 @@
   (let* (
 	 (a (uri-decode d))
 	;; (b (map list (cdr (string-split a #\newline))))
-	 (temp-f (string-append "pub/" (get-rand-file-name "rnd" "txt")))
+	 (temp-f (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "rnd" "txt")))
 	 (p  (open-output-file temp-f))
 	 (dummy (begin
 		  (put-string p a )

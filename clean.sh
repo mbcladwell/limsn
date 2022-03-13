@@ -27,6 +27,7 @@ cp /home/mbc/syncd/tobedeleted/limsnaccessories/scripts/*.sh ./scripts
 
 
 make dist
+cp /home/mbc/projects/limsn/limsn-0.1.tar.gz /home/mbc/projects/ln11
 
 
 

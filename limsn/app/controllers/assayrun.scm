@@ -244,9 +244,9 @@
 			  (manthreshold (stripfix (:from-post rc 'get-vals "manthreshold")))
 			  (manthreshold-flag (if (equal? manthreshold "") #f #t))
 			  (metric (if manthreshold-flag "4" (stripfix (:from-post rc 'get-vals "threshold"))))
-			  (threshold (if manthreshold-flag manthreshold
+			  (thresholdstr (if manthreshold-flag manthreshold
 					(cdaar (DB-get-all-rows (:conn rc  (get-threshold-value-sql response metric arid )))) ))		     
-			  (thresholdstr (number->string threshold))
+			  (threshold  (string->number thresholdstr))
 			 
 			  (holder2 (DB-get-all-rows (:conn rc (get-main-data-table-sql response arid))))
 			  (nrows (length holder2))
