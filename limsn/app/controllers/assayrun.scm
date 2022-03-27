@@ -6,7 +6,7 @@
 (use-modules (artanis utils)(artanis irregex)(srfi srfi-1)(dbi dbi)
 	     (labsolns artass)(rnrs bytevectors)(ice-9 popen)
 	     (ice-9 textual-ports)(ice-9 rdelim)(web uri)
-	     (labsolns gplot)(ice-9 pretty-print))
+	     (labsolns gplot)(ice-9 pretty-print)(artanis env))
  
 (define (prep-ar-for-g a)
   ;; 1 'unknown' ? 0x000000  black
@@ -130,7 +130,7 @@
 			  (arid   (get-from-qstr rc "arid"))
 			  (sid (:cookies-value rc "sid"))
 			  (prjid (get-prjid rc sid))
-			  (outfile (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "script" "txt")))			  
+			  (outfile (string-append "../../../../../../../../../" current-toplevel (get-rand-file-name "script" "txt")))			  
 			  (response "1")
 			  (metric "3")			  
 			  (threshold (cdaar (DB-get-all-rows (:conn rc  (get-threshold-value-sql response metric arid )))))
@@ -235,7 +235,7 @@
 			  (prjid (get-prjid rc sid))
 			  (arid  (stripfix (:from-post rc 'get-vals "arid")))
 			  ;;(outfile (get-rand-file-name "ar" "png"))
-			  (outfile (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "script" "txt")))			  
+			  (outfile (string-append "../../../../../../../../../" current-toplevel (get-rand-file-name "script" "txt")))			  
 			  (body-encode   (uri-decode (:from-post rc 'get-vals "bodyencode"))) ;;body of the ar table
 			  (body (dehtmlify body-encode))
 			  (hit-lists-encode (uri-decode (:from-post rc 'get-vals "hitlistsencode")))

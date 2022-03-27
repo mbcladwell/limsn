@@ -1,6 +1,7 @@
 #!/bin/sh
 
 PATH_INTO_STORE=abcdefgh/share/guile/site/3.0/limsn/postgres
+. $HOME/.guix-profile/etc/profile
    
 mkdir lndata
 
