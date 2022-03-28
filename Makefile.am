@@ -32,9 +32,9 @@ SUFFIXES = .scm .go
 .scm.go:
 	$(AM_V_GEN)$(top_builddir)/pre-inst-env $(GUILE_TOOLS) compile $(GUILE_WARNINGS) -o "$@" "$<"
 
-SOURCES = limsn/lib/labsolns/lnpg.scm \
-          limsn/lib/labsolns/artass.scm \
-          limsn/lib/labsolns/gplot.scm \
+SOURCES = limsn/lib/lnpg.scm \
+          limsn/lib/artass.scm \
+          limsn/lib/gplot.scm \
           limsn/lib/run-lnpg.scm \
           limsn/app/views/plateset/addstep2.html.tpl \
           limsn/app/views/plateset/add.html.tpl \

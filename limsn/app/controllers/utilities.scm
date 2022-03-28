@@ -1,9 +1,25 @@
 ;; Controller utilities definition of lnserver
 ;; Please add your license header here.
 ;; This file is generated automatically by GNU Artanis.
+(define-module (app controllers utilities)
+  #:use-module (artanis mvc controller)
+  #:use-module  (artanis utils)
+   #:use-module (artanis irregex)
+   #:use-module (artanis config)
+  #:use-module (srfi srfi-1)
+  #:use-module (dbi dbi)
+  #:use-module (limsn lib artass)
+  #:use-module (rnrs bytevectors)
+  #:use-module  (ice-9 rdelim)
+  #:use-module  (web uri)	     
+  #:use-module  (web request)	     
+  #:use-module  (web client)	     
+ #:use-module (ice-9 receive)
+  )
+
 (define-artanis-controller utilities) ; DO NOT REMOVE THIS LINE!!!
 
-(use-modules (artanis utils)(artanis irregex)(srfi srfi-1)(dbi dbi) (labsolns artass)
+(use-modules (artanis utils)(artanis mvc controller)(artanis irregex)(srfi srfi-1)(dbi dbi) (limsn lib artass)
 	     (artanis config)  (web response) (rnrs bytevectors)
 	     (web request) (web client)
 	     (web uri)(ice-9 receive))

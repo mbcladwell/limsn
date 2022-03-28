@@ -1,10 +1,22 @@
 ;; Controller target definition of lnserver
 ;; Please add your license header here.
 ;; This file is generated automatically by GNU Artanis.
+(define-module (app controllers target)
+  #:use-module (artanis mvc controller)
+  #:use-module  (artanis utils)
+   #:use-module (artanis irregex)
+  #:use-module (srfi srfi-1)
+  #:use-module (dbi dbi)
+  #:use-module (limsn lib artass)
+  #:use-module  (ice-9 textual-ports)
+  #:use-module  (ice-9 rdelim)
+ #:use-module (ice-9 pretty-print)
+  )
+
 (define-artanis-controller target) ; DO NOT REMOVE THIS LINE!!!
 
-(use-modules (artanis utils)(artanis irregex)(srfi srfi-1)(dbi dbi) (labsolns artass)
-	     (ice-9 textual-ports)(ice-9 rdelim)(labsolns artass)(ice-9 pretty-print))
+;(use-modules (artanis utils)(artanis mvc controller)(artanis irregex)(srfi srfi-1)(dbi dbi) (limsn lib artass)
+;	     (ice-9 textual-ports)(ice-9 rdelim)(limsn lib artass)(ice-9 pretty-print))
 
 
 (define (prep-trg-rows a)

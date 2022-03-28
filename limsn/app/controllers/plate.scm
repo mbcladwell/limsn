@@ -1,14 +1,25 @@
 ;; Controller plate definition of lnserver
 ;; Please add your license header here.
 ;; This file is generated automatically by GNU Artanis.
+(define-module (app controllers plate)
+  #:use-module (artanis mvc controller)
+  #:use-module  (artanis utils)
+  #:use-module  (artanis irregex)
+ #:use-module  (artanis cookie)
+  #:use-module (srfi srfi-1)
+  #:use-module (dbi dbi)
+  #:use-module (limsn lib artass)
+  )
+  
+
 (define-artanis-controller plate) ; DO NOT REMOVE THIS LINE!!!
 
-(use-modules (artanis utils)(artanis irregex)
+(use-modules (artanis utils)(artanis mvc controller)(artanis irregex)
 	     (artanis cookie)
 	     (ice-9 match)
 	     (srfi srfi-19) ;;date-time
 	     (srfi srfi-1)(dbi dbi)
-	     (labsolns artass))
+	     (limsn lib artass))
 
 (define (prep-plt-for-ps-rows a)
   (fold (lambda (x prev)

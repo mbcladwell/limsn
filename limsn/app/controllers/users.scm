@@ -1,8 +1,18 @@
 ;; Controller users definition of lnserver
 ;; Please add your license header here.
 ;; This file is generated automatically by GNU Artanis.
+(define-module (app controllers users)
+  #:use-module (artanis mvc controller)
+  #:use-module  (artanis utils)
+   #:use-module (artanis irregex)
+  #:use-module (srfi srfi-1)
+  #:use-module (dbi dbi)
+  #:use-module (limsn lib artass)
+  )
+  
 (define-artanis-controller users) ; DO NOT REMOVE THIS LINE!!!
-(use-modules (artanis utils)(artanis irregex)(srfi srfi-1)(dbi dbi) (labsolns artass))
+
+;;(use-modules (artanis utils)(artanis mvc controller)(artanis irregex)(srfi srfi-1)(dbi dbi) (limsn lib artass))
 
 
 (define (default-hmac passwd salt)

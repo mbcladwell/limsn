@@ -1,18 +1,34 @@
 ;; Controller login definition of postest
 ;; Please add your license header here.
 ;; This file is generated automatically by GNU Artanis.
-
+(define-module (app controllers login)
+  #:use-module (artanis mvc controller)
+  #:use-module  (artanis utils)
+  #:use-module  (artanis artanis)
+ #:use-module  (artanis cookie)
+  #:use-module  ((rnrs) #:select (define-record-type))
+   #:use-module (artanis irregex)
+  #:use-module (srfi srfi-1)
+  #:use-module (dbi dbi)
+  #:use-module (limsn lib artass)
+  #:use-module (rnrs bytevectors)
+  #:use-module  (ice-9 textual-ports)
+  #:use-module  (ice-9 rdelim)
+  #:use-module  (web uri)	     
+ #:use-module (ice-9 pretty-print)
+  )
+  
 (define-artanis-controller login) ; DO NOT REMOVE THIS LINE!!!
 
-;;(use-modules (labsolns artass)(artanis cookie))
+;;(use-modules (limsn lib artass)(artanis cookie))
 	     
 
-(use-modules (artanis artanis)(artanis utils)(artanis irregex)
-	     ((rnrs) #:select (define-record-type))
-	     (labsolns artass)(artanis cookie)
-	     (srfi srfi-1)(dbi dbi) 
-	     (ice-9 textual-ports)(ice-9 rdelim)(rnrs bytevectors)
-	     (web uri)(ice-9 pretty-print))
+;(use-modules (artanis artanis)(artanis utils)(artanis mvc controller)(artanis irregex)
+;	     ((rnrs) #:select (define-record-type))
+;	     (limsn lib artass)(artanis cookie)
+;	     (srfi srfi-1)(dbi dbi) 
+;	     (ice-9 textual-ports)(ice-9 rdelim)(rnrs bytevectors)
+;	     (web uri)(ice-9 pretty-print))
 
 (get "/login"
       #:cookies '(names prjid sid )

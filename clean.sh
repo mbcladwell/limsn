@@ -10,7 +10,7 @@ rm ./*.go
 rm ./limsn/*.go
 rm ./scripts/*.*
 rm ./limsn-0.1.tar.gz
-rm ./limsn/lib/labsolns/*.go
+rm ./limsn/lib/*.go
 rm ./limsn/app/api/*.go
 rm ./limsn/app/controllers/*.go
 hall init --convert --author "mbc" limsn --execute

@@ -1,4 +1,4 @@
-(use-modules (labsolns lnpg))
+(define-module (limsn lib run-lnpg))
  
 (define (main args)
   ;;args:  ip port username password dbname method destination

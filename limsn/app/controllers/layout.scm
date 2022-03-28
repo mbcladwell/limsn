@@ -1,16 +1,34 @@
 ;; Controller layout definition of lnserver
 ;; Please add your license header here.
 ;; This file is generated automatically by GNU Artanis.
+(define-module (app controllers layout)
+  #:use-module (artanis mvc controller)
+  #:use-module  (artanis utils)
+  #:use-module (artanis irregex)
+  #:use-module (artanis artanis)
+  #:use-module (srfi srfi-1)
+  #:use-module (dbi dbi)
+  #:use-module (limsn lib artass)
+  #:use-module (limsn lib gplot)
+  #:use-module (rnrs bytevectors)
+  #:use-module (ice-9 popen)
+  #:use-module  (ice-9 textual-ports)
+  #:use-module  (ice-9 rdelim)
+  #:use-module  (web uri)	     
+ #:use-module (ice-9 pretty-print)
+ #:use-module (oop goops) ;;class-of
+  )
+
 (define-artanis-controller layout) ; DO NOT REMOVE THIS LINE!!!
 
 ;; https://web-artanis.com/docs/manual.html#org5cb8432
 ;; (add-to-load-path "/home/mbc/projects/ln4/")
 
-(use-modules (artanis artanis)(artanis utils)(artanis irregex)	     
-	     (srfi srfi-1)(dbi dbi) (labsolns artass)(labsolns gplot)(ice-9 popen)
-	     (ice-9 textual-ports)(ice-9 rdelim)(rnrs bytevectors)(web uri)(ice-9 pretty-print)
-	     (oop goops) ;;class-of
-	     )
+;(use-modules (artanis artanis)(artanis utils)(artanis mvc controller)(artanis irregex)	     
+;	     (srfi srfi-1)(dbi dbi) (limsn lib artass)(limsn lib gplot)(ice-9 popen)
+;	     (ice-9 textual-ports)(ice-9 rdelim)(rnrs bytevectors)(web uri)(ice-9 pretty-print)
+;	     (oop goops) ;;class-of
+;	     )
 
 (define (prep-lyt-rows a)
   (fold (lambda (x prev)
