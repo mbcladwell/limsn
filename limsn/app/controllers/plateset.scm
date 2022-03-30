@@ -3,22 +3,21 @@
 ;; Please add your license header here.
 ;; This file is generated automatically by GNU Artanis.
 (define-module (app controllers plateset)
-  #:use-module (artanis mvc controller)
-  #:use-module  (artanis utils)
- #:use-module  (artanis cookie)
- #:use-module (srfi srfi-19)   ;; date time
-   #:use-module (artanis irregex)
-  #:use-module (srfi srfi-11) ;;let-values
-  #:use-module  (srfi srfi-1)
-  #:use-module (dbi dbi)
-  #:use-module (limsn lib artass)
-  #:use-module (rnrs bytevectors)
-  #:use-module  (ice-9 textual-ports)
-  #:use-module  (ice-9 match)
-  #:use-module  (ice-9 rdelim)
-  #:use-module  (web uri)	     
-  )
-  
+#:use-module (artanis mvc controller) 
+#:use-module (artanis utils)
+#:use-module (artanis mvc controller)
+#:use-module (artanis irregex)
+#:use-module (artanis cookie) 
+#:use-module (srfi srfi-1)
+#:use-module (dbi dbi)
+#:use-module (web uri)
+#:use-module (srfi srfi-19)   ;; date time
+#:use-module (limsn lib artass)
+#:use-module (ice-9 match)
+#:use-module (srfi srfi-11) ;; let-values
+#:use-module (ice-9 textual-ports)
+#:use-module (ice-9 rdelim)	     	     
+#:use-module (limsn lib artass))
 
 (define-artanis-controller plateset) ; DO NOT REMOVE THIS LINE!!!
 
@@ -28,7 +27,7 @@
 ;	     (limsn lib artass)(ice-9 match)
 ;	     (srfi srfi-11) ;; let-values
 ;	     (ice-9 textual-ports)(ice-9 rdelim)
-;	     (limsn lib artass))
+;	     	     (limsn lib artass))
 
 (define (prep-ps-for-prj-rows a)
   (fold (lambda (x prev)

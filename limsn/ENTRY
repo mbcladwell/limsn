@@ -11,6 +11,7 @@
 ;; (add-to-load-path "/home/mbc/syncd/tobedeleted/limsn")
 ;; (add-to-load-path "/home/admin/limsn")
  (add-to-load-path "abcdefgh/limsn")
+ (add-to-load-path "abcdefgh")
  
 
 ;;(conf-set! 'maxplates 100)

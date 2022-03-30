@@ -2,8 +2,8 @@
 
 (define script-version "2019-01-15.13") ;UTC
 
-;;; Copyright © 2015, 2016 Mathieu Lirzin <mthl@gnu.org>
-;;; Copyright © 2019 Alex Sassmannshausen <alex@pompo.co>
+;;; Copyright ? 2015, 2016 Mathieu Lirzin <mthl@gnu.org>
+;;; Copyright ? 2019 Alex Sassmannshausen <alex@pompo.co>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by

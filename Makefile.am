@@ -140,7 +140,6 @@ SOURCES = limsn/lib/lnpg.scm \
           limsn/app/controllers/assayrun.scm \
           limsn/app/controllers/.gitkeep \
           limsn/app/controllers/plateset.scm \
-          limsn/app/controllers/test.scm \
           limsn/app/controllers/utilities.scm \
           limsn/app/controllers/layout.scm \
           limsn/app/controllers/project.scm \
@@ -319,7 +318,6 @@ SOURCES = limsn/lib/lnpg.scm \
           limsn/postgres/initdbb.sql \
           limsn/postgres/create-db.sql \
           limsn/.route \
-          limsn/manifest.scm \
           limsn/README \
           limsn/Rplots.pdf \
           limsn/ENTRY \
