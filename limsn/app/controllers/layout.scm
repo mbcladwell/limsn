@@ -255,8 +255,8 @@
      (let* ((help-topic "layouts")
 	    (sid (:cookies-value rc "sid"))
 	    (prjid (get-prjid rc sid))	   
-	    (infile (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "lyt" "txt"))) ;;do not incorporate the "pub" here because the html
-	    (spl-out  (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "lyt" "txt"))) ;; does not want the pub
+	    (infile (string-append "../../../../../../../../../" (current-toplevel) (get-rand-file-name "lyt" "txt"))) ;;do not incorporate the "pub" here because the html
+	    (spl-out  (string-append "../../../../../../../../../" (current-toplevel) (get-rand-file-name "lyt" "txt"))) ;; does not want the pub
 	    (a (uri-decode (:from-post rc 'get-vals "datatransfer")))
 	    (b (map list (cdr (string-split a #\newline))))
 	    (c (filter-empty b '()))
@@ -364,9 +364,9 @@
 			(prjid (get-prjid rc sid))
 			(lytid  (get-from-qstr rc "id"))
 			
-			(spl-out (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "lyt" "txt")))
-			(spl-rep-out (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "lyt" "txt")))
-			(trg-rep-out (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "lyt" "txt")))	 
+			(spl-out (string-append "../../../../../../../../../" (current-toplevel) (get-rand-file-name "lyt" "txt")))
+			(spl-rep-out (string-append "../../../../../../../../../" (current-toplevel) (get-rand-file-name "lyt" "txt")))
+			(trg-rep-out (string-append "../../../../../../../../../" (current-toplevel) (get-rand-file-name "lyt" "txt")))	 
 			(format (get-format-for-layout-id lytid rc))
 			(sql (string-append "SELECT source_dest FROM plate_layout_name WHERE id=" lytid));;determine if source or dest
 			(srcdest (assoc-ref (car (DB-get-all-rows (:conn rc sql))) "source_dest"))

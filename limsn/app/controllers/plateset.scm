@@ -505,7 +505,7 @@
   (let* (
 	 (a (uri-decode d))
 	;; (b (map list (cdr (string-split a #\newline))))
-	 (temp-f (string-append "../../../../../../../../../tmp/limsn/" (get-rand-file-name "rnd" "txt")))
+	 (temp-f (string-append "../../../../../../../../../" (current-toplevel) (get-rand-file-name "rnd" "txt")))
 	 (p  (open-output-file temp-f))
 	 (dummy (begin
 		  (put-string p a )

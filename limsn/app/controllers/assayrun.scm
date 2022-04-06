@@ -187,7 +187,7 @@
 ;; 			  (arid   (get-from-qstr rc "arid"))
 ;; 			  (sid (:cookies-value rc "sid"))
 ;; 			  (prjid (get-prjid rc sid))
-;; 			  (outfile (string-append "../../../../../../../../../var/tmp/" (get-rand-file-name "ar" "png")))			  
+;; 			  (outfile (string-append "../../../../../../../../../" (current-toplevel) (get-rand-file-name "ar" "png")))			  
 ;; 			  (response "1")
 ;; 			  (metric "3")			  
 ;; 			  (threshold (cdaar (DB-get-all-rows (:conn rc  (get-threshold-value-sql response metric arid )))))
