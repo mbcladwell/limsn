@@ -115,13 +115,23 @@
 
   ))
 
+;; (define (get-hits-table-sql response threshold arid )
+;;   (let* ((column (cond ((equal? response "0") "bkgrnd_sub")
+;; 		       ((equal? response "1") "norm")
+;; 		       ((equal? response "2") "norm_pos")
+;; 		       ((equal? response "3") "p_enhance")))
+;; 	 )
+;; (string-append  "SELECT  ROW_NUMBER () OVER (ORDER BY assay_result." column " DESC), assay_result." column ", plate_layout.well_type_id FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id AND plate_layout.well_type_id=1 AND assay_result." column " > " threshold " AND assay_run.ID =" arid) ))
+
+;;above giving 194 hits with norm, 3SD AR6; 162 below:
+
 (define (get-hits-table-sql response threshold arid )
   (let* ((column (cond ((equal? response "0") "bkgrnd_sub")
 		       ((equal? response "1") "norm")
 		       ((equal? response "2") "norm_pos")
 		       ((equal? response "3") "p_enhance")))
 	 )
-(string-append  "SELECT  ROW_NUMBER () OVER (ORDER BY assay_result." column " DESC), assay_result." column ", plate_layout.well_type_id FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id AND plate_layout.well_type_id=1 AND assay_result." column " > " threshold " AND assay_run.ID =" arid) ))
+(string-append  "SELECT  ROW_NUMBER () OVER (ORDER BY assay_result." column " DESC), assay_result." column ", plate_layout.well_type_id FROM  assay_result, assay_run, plate_layout_name, plate_layout, plate_set, plate, plate_plate_set, well_numbers, well, well_sample WHERE assay_run.plate_set_id = plate_set.id AND assay_run.plate_layout_name_id = plate_layout_name.id AND assay_run.id=assay_result.assay_run_id AND assay_result.plate_order = plate_plate_set.plate_order AND assay_result.well = well.by_col AND plate_set.plate_layout_name_id = plate_layout_name.id AND plate_set.plate_format_id = well_numbers.plate_format AND plate_layout.well_by_col=well.by_col AND plate_set.id = plate_plate_set.plate_set_id AND plate_plate_set.plate_id = plate.id AND plate.id = well.plate_id AND well.by_col = well_numbers.by_col AND well_sample.well_id =  well.id AND well.by_col=well_numbers.by_col AND plate_layout_name.id= plate_layout.plate_layout_name_id AND plate_layout.well_type_id=1 AND assay_result." column " > " threshold " AND assay_run.ID =" arid) ))
 
 
 (define (get-threshold-value-sql response metric arid)
@@ -261,9 +271,10 @@
 			  (manthreshold (stripfix (:from-post rc 'get-vals "manthreshold")))
 			  (manthreshold-flag (if (equal? manthreshold "") #f #t))
 			  (metric (if manthreshold-flag "4" (stripfix (:from-post rc 'get-vals "threshold"))))
-			  (thresholdstr (if manthreshold-flag manthreshold
+			  (threshold (if manthreshold-flag manthreshold
 					(cdaar (DB-get-all-rows (:conn rc  (get-threshold-value-sql response metric arid )))) ))		     
-			  (threshold  (string->number thresholdstr))
+		;;	  (threshold  (string->number thresholdstr))
+			  (thresholdstr  (number->string threshold))
 			 
 			  (holder2 (DB-get-all-rows (:conn rc (get-main-data-table-sql response arid))))
 			  (nrows (length holder2))
