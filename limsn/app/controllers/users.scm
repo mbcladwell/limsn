@@ -16,7 +16,10 @@
 
 
 (define (default-hmac passwd salt)
-  (substring (string->sha-256 (string-append passwd salt)) 0 16))
+  (if passwd
+      (substring (string->sha-256 (string-append passwd salt)) 0 16)
+      (substring (string->sha-256 (string-append salt)) 0 16)
+      ))
 
 
 
