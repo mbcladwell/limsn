@@ -21,13 +21,13 @@
 (define-artanis-controller login) ; DO NOT REMOVE THIS LINE!!!
 
 
-(get "/login"
+(get "/login?"
       #:cookies '(names prjid sid )
-   ;;   #:from-post #t
+      ;;#:from-post 'qstr
   (lambda (rc)
     (let* (
 	  ;; (login-failed (if (:from-post rc 'get-vals "login_failed") (:from-post rc 'get-vals "login_failed") ""))
-	   (login-failed (if (params rc "login_failed") (params rc  "login_failed") ""))
+	   (login-failed (if (params rc "login_failed") (params rc  "login_failed") "")) ;;prints Login Failed in red
 	   (help-topic "login")
 	;;   (dest (:from-post rc 'get-vals "destination"))
 	 ;; (dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
@@ -36,24 +36,23 @@
 	  ;; (dummy (:cookies-setattr! rc 'prjid #:path "/"))
 	   ;;(dummy (:cookies-update! rc))
 	   (dest (params rc "destination"))
-	   (name (params rc "name"))
+	    (name (get-from-qstr rc "name"))
+	  ;; (name "zod")
+	   (dummy (DEBUG  "###################################################################The value of name (in login) is: ~a~%" name))
+	   (dummy (DEBUG  "###################################################################The value of name (in login) is: ~a~%" name))
+	   (dummy (DEBUG  "###################################################################The value of name (in login) is: ~a~%" name))
+	   (dummy (DEBUG  "###################################################################The value of name (in login) is: ~a~%" name))
+	   (dummy (DEBUG  "###################################################################The value of name (in login) is: ~a~%" name))
 	   (destinationq (addquotes (if dest dest "/project/getall")))
 	 )
-      (view-render "login" (the-environment))
+      (if name
+	  (redirect-to rc  (get-redirect-uri (string-append "/urbit?name=" name)))
+	  (view-render "login" (the-environment)))
    ;;   (redirect-to rc  (get-redirect-uri "/login"))
   )))
 
 
-
-
-(define (get-id-for-name name rows)
-  (if (and  (null? (cdr rows))  (string=?  (cdadar rows) name))
-      (number->string (cdaar rows))
-      (if (string=?  (cdadar rows) name)
-	   (number->string (cdaar rows))
-	   (get-id-for-name name (cdr rows)))))
-
-
+;; /auth is the post action on the login form; urbit users never see this
 (post "/auth"
       #:auth `(table person "lnuser" "passwd" "salt" ,my-hmac)
       #:session #t
@@ -72,10 +71,10 @@
 		    (userid (if sid (let* (
 					   (sql "select id, lnuser, usergroup from person")
 					   (ret  (DB-get-all-rows (:conn rc sql)))  ;;this is in artanis/artanis/db.scm
-					  ;; (lnuser (:from-post rc 'get-vals "lnuser"))
-					   (name (:from-post rc 'get-vals "name"))
-					   (dummy  (DEBUG  (string-append "Value of name: " name "~%")))				
-					   (lnuser (if name name (:from-post rc 'get-vals "lnuser")))
+					   (lnuser (:from-post rc 'get-vals "lnuser"))
+					  ;; (name (:from-post rc 'get-vals "name"))
+					  ;; (dummy  (DEBUG  (string-append "Value of name: " name "~%")))				
+					  ;; (lnuser (if name name (:from-post rc 'get-vals "lnuser")))
 					   (userid (get-id-for-name lnuser ret))
 					   (sql2 (string-append "INSERT INTO sess_person ( sid, person_id, prjid) VALUES ('" sid "', " userid ", 1)"))
 					   (dummy (:conn rc sql2))

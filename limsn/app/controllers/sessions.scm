@@ -19,8 +19,8 @@
 
 ;; default session is one hour.  Change it in:
 ;; artanis/artanis/session.scm L388
-;; artanis/artanis/cookie.scm L129   to 21600 for 6 hours
-;; artanis/artanis/oht.scm L264   to 21600 for 6 hours  2592000 for 1 month
+;; artanis/artanis/cookie.scm L129     to 21600 for 6 hours
+;; artanis/artanis/oht.scm L264        to 21600 for 6 hours  2592000 for 1 month
 
 (define (prep-session-rows a)
   (fold (lambda (x prev)
@@ -61,15 +61,17 @@
 
 
 
-(get "/sesschk"
+(get "/sessions/sesschk"
      #:session #t
      #:conn #t
-		#:cookies '(names prjid userid group sid)
-		 (lambda (rc)
-		   (let* ((help-topic "session")
-			  (check (:session rc 'check))
-			  (sid (:cookies-value rc "sid"))
-			  (result (get-id-name-group-email-for-session rc sid))
-			  )
-		     (view-render "sesschk" (the-environment))
-		     )))
+     #:session #t
+     #:cookies '(names prjid userid group sid)
+     (lambda (rc)
+       (let* ((help-topic "session")
+	      (check (:session rc 'check))
+	      (sid (:cookies-value rc "sid"))
+	      ;;(result (get-id-name-group-email-for-session rc sid))
+	      (result (:session rc 'spawn))
+	      )
+	 (view-render "sesschk" (the-environment))
+	 )))

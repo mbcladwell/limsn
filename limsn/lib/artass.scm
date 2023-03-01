@@ -52,6 +52,7 @@
 	    get-redirect-string
 	    get-prjid
 	    update-prjid
+	    get-id-for-name
 	    ))
 
 
@@ -255,4 +256,10 @@
 	 (dummy  (:conn rc sql)))  
    #f))
 
+(define (get-id-for-name name rows)
+  (if (and  (null? (cdr rows))  (string=?  (cdadar rows) name))
+      (number->string (cdaar rows))
+      (if (string=?  (cdadar rows) name)
+	   (number->string (cdaar rows))
+	   (get-id-for-name name (cdr rows)))))
 
