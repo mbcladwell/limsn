@@ -62,7 +62,7 @@
 
 	      (lambda (rc)
 		(let* ((help-topic "user")
-		       (prjid (:cookies-value rc "prjid"))		       
+		       (prjid (if (:cookies-value rc "prjid") (:cookies-value rc "prjid") "1"))		       
 		       (sid (:cookies-value rc "sid"))
 	       ;; (sql "SELECT help_url_prefix,  cust_id, cust_key, cust_email FROM config WHERE id=1")
 		       ;; (ret   (car (DB-get-all-rows (:conn rc sql))))
