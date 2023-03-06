@@ -40,7 +40,7 @@
 		       #:cookies '(names prjid userid sid))
 	      (lambda (rc)
 		(let* ((help-topic "users")
-		       (prjid (:cookies-value rc "prjid"))
+		       (prjid (if (:cookies-value rc "prjid") (:cookies-value rc "prjid") "1"))		       
 		       (userid (:cookies-value rc "userid"))
 		       (sid (:cookies-value rc "sid"))  
 		       (identity (get-id-name-group-email-for-session rc sid))
