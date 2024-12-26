@@ -25,9 +25,7 @@ create table person
 insert into person (lnuser, passwd, salt, email, usergroup)
         VALUES ('ln_admin','1d52114553ae31b3','a39b69e5fd79854b', 'info@labsolns.com', 'admin'),
                ('ln_user','ca6468f6ff4a82e6','e999f4c34635f943', '','user'),
-	       ('demo','97f8647f1067346d','55ecb01c50cb1ae1', '','user'),
-	        ('nus','','', '','user'),
-	       ('zod','','', '','user');
+	       ('demo','97f8647f1067346d','55ecb01c50cb1ae1', '','user');
 
 
 
