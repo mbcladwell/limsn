@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PATH_INTO_STORE=abcdefgh/share/guile/site/3.0/limsn/postgres
+PATH_INTO_STORE=path-into-store/share/guile/site/3.0/limsn/postgres
    
  owner=$1 
  psql -U $owner -h 127.0.0.1 postgres -a -f $PATH_INTO_STORE/initdba.sql
