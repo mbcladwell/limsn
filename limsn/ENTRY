@@ -10,8 +10,8 @@
 ;; (add-to-load-path "/home/mbc/projects/limsn")
 ;; (add-to-load-path "/home/mbc/syncd/tobedeleted/limsn")
 ;; (add-to-load-path "/home/admin/limsn")
- (add-to-load-path "abcdefgh/limsn")
- (add-to-load-path "abcdefgh")
+ (add-to-load-path "pathintostore/limsn")
+ (add-to-load-path "pathintostore")
  
 
 ;;(conf-set! 'maxplates 100)

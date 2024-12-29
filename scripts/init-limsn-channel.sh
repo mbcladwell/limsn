@@ -1,6 +1,6 @@
 #! /bin/bash
 
-PATH_INTO_STORE=path-into-store
+PATH_INTO_STORE=pathintostore
 export LC_ALL="C"
 echo export LC_ALL=\"C\" >> $HOME/.bashrc
 echo export GUIX_PROFILE=$HOME/.guix-profile >> $HOME/.bashrc

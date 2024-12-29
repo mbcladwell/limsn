@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PATH_INTO_STORE=path-into-store/share/guile/site/3.0/limsn/postgres
+PATH_INTO_STORE=pathintostore/share/guile/site/3.0/limsn/postgres
    
  host=$1
  password=$2
