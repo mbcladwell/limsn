@@ -1,6 +1,6 @@
 #! /bin/bash
 
-PATH_INTO_STORE=$HOME/pathintostore
+PATH_INTO_STORE=$HOMEpathintostore
 export LC_ALL="C"
 echo export LC_ALL=\"C\" >> $HOME/.bashrc
 echo export PATH="$HOME/bin${PATH:+:}$PATH" >> $HOME/.bashrc
