@@ -14,7 +14,7 @@
 ;;because this is a module you need a helper file lib/run-lnpg.scm that can be used as a script file
 
 
-(define lnpg-store-dir "pathintostore")
+(define lnpg-store-dir "$HOME/pathintostore")
 
 (define (get-pg-superuser-pgdb user pw ip port dbname)
   ;; needed to create users and the database
