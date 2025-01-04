@@ -7,11 +7,12 @@
 )
  ;; Put whatever you want to be called before server initilization here
  
-;; (add-to-load-path "/home/mbc/projects/limsn")
+ (add-to-load-path "/home/mbc/projects/limsn")
+;;(add-to-load-path "/home/mbc/projects/artanis")
 ;; (add-to-load-path "/home/mbc/syncd/tobedeleted/limsn")
 ;; (add-to-load-path "/home/admin/limsn")
- (add-to-load-path "pathintostore/limsn")
- (add-to-load-path "pathintostore")
+;; (add-to-load-path "pathintostore/limsn")
+;; (add-to-load-path "pathintostore")
  
 
 ;;(conf-set! 'maxplates 100)
