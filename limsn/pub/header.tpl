@@ -88,8 +88,8 @@
        </li>      
    </li>
     
- <li class="active"> <a href="http://www.labsolns.com/software/<%= help-topic %> ">HELP</a></li>
-  <li class="active"><a href="http://www.labsolns.com/software/toc">TOC</a></li>
+ <li class="active"> <a href="http://www.labsolns.com/limsn/<%= help-topic %> ">HELP</a></li>
+  <li class="active"><a href="http://www.labsolns.com/limsn/toc">TOC</a></li>
   <li class="active"><a href="mailto:info@labsolns.com">Contact</a></li>
 </ul>
   </nav>

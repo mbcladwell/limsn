@@ -19,7 +19,7 @@ view layout select
       <input type="hidden" id="infile" name="infile" value=&quot;<%= infile %>&quot; >
       
        <a href=/plateset/add?format=96&type=master&prjid=<%= prjid %>>Add to PRJ-<%= prjid %></a>
-       <a href="http://www.labsolns.com/software/<%= help-topic %> ">HELP</a></li>
+       <a href="http://www.labsolns.com/limsn/<%= help-topic %> ">HELP</a></li>
 
 
  * from post data

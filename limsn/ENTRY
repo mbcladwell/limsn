@@ -3,20 +3,22 @@
  (use-modules (artanis artanis)
               ;; Put modules you want to be imported here
               ;; only for this file, not controllers/views
-	      ;;(artanis config)
+	      (artanis utils)
 )
  ;; Put whatever you want to be called before server initilization here
  
- (add-to-load-path "/home/mbc/projects/limsn")
+;; (add-to-load-path "/home/mbc/projects/limsn")
+;; (add-to-load-path "/gnu/store/rfgcri126zxyd3kdxp23751pw18lrca4-artanis-1.0.0/share/guile/site/3.0")
 ;;(add-to-load-path "/home/mbc/projects/artanis")
 ;; (add-to-load-path "/home/mbc/syncd/tobedeleted/limsn")
 ;; (add-to-load-path "/home/admin/limsn")
-;; (add-to-load-path "pathintostore/limsn")
+ (add-to-load-path "pathintostore/limsn")
 ;; (add-to-load-path "pathintostore")
  
 
 ;;(conf-set! 'maxplates 100)
 
- (init-server)
+;; (init-server)
+(init-server #:statics '(png gif jpg jpeg ico html js json csv xml css woff woff2 ttf))
 
  ;; Put whatever you want to be called before server running here

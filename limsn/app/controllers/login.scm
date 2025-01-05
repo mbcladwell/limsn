@@ -8,6 +8,7 @@
   #:use-module (artanis cookie)
   #:use-module ((rnrs) #:select (define-record-type))
   #:use-module (artanis irregex)
+ #:use-module  (artanis security nss)
   #:use-module (srfi srfi-1)
   #:use-module (dbi dbi)
   #:use-module (limsn lib artass)
@@ -23,32 +24,33 @@
 
 (get "/login?"
       #:cookies '(names prjid sid )
-      #:from-post 'qstr
+      ;;#:from-post 'qstr
   (lambda (rc)
     (let* (
 	  ;; (login-failed (if (:from-post rc 'get-vals "login_failed") (:from-post rc 'get-vals "login_failed") ""))
 	   (login-failed (if (params rc "login_failed") (params rc  "login_failed") "")) ;;prints Login Failed in red
 	   (help-topic "login")
-	  (dest (:from-post rc 'get-vals "destination"))
-	 (dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
-	  (dummy (:cookies-remove! rc 'prjid ))
-	  (dummy (:cookies-set! rc 'prjid "prjid" "1"))
-	  (dummy (:cookies-setattr! rc 'prjid #:path "/"))
-	   (dummy (:cookies-update! rc))
+	;;   (dest (:from-post rc 'get-vals "destination"))
+	 ;; (dummy (:cookies-set! rc 'prjid "prjid" (:cookies-value rc "prjid")))
+	  ;; (dummy (:cookies-remove! rc 'prjid ))
+	  ;; (dummy (:cookies-set! rc 'prjid "prjid" "1"))
+	  ;; (dummy (:cookies-setattr! rc 'prjid #:path "/"))
+	   ;;(dummy (:cookies-update! rc))
 	   (dest (params rc "destination"))
 	    (name (get-from-qstr rc "name"))
+	  ;; (name "zod")
 	   (dummy (DEBUG  "###################################################################The value of name (in login) is: ~a~%" name))
 	   (dummy (DEBUG  "###################################################################The value of name (in login) is: ~a~%" name))
 	   (dummy (DEBUG  "###################################################################The value of name (in login) is: ~a~%" name))
 	   (dummy (DEBUG  "###################################################################The value of name (in login) is: ~a~%" name))
-	   (dummy (DEBUG  "###################################################################The value of name (in login) is: ~a~%" name))
+	   (dummy (DEBUG  "###################################################################The value of name (in login) is: ~a~%" (the-environment)))
 	   (destinationq (addquotes (if dest dest "/project/getall")))
 	 )
-      (if name
+  ;;    (if name
 ;;	  (redirect-to rc  (get-redirect-uri (string-append "/urbit?name=" name)))
 	  (view-render "login" (the-environment)))
-      (redirect-to rc  (get-redirect-uri "/login"))
-  )))
+   ;;   (redirect-to rc  (get-redirect-uri "/login"))
+  ))
 
 
 ;; /auth is the post action on the login form; urbit users never see this

@@ -82,7 +82,7 @@
 (utilities-define help
 		  (lambda (rc)
 		    (let* ((topic (get-from-qstr rc "topic")))
-		    (redirect-to rc  (get-redirect-uri (string-append "../software/" topic "/index.html") )))))
+		    (redirect-to rc  (get-redirect-uri (string-append "../limsn/" topic "/index.html") )))))
 
 
 
@@ -166,10 +166,10 @@
 ;; 			   (lname (stripfix (:from-post rc 'get-vals "lname")))
 ;; 			   (inst (stripfix (:from-post rc 'get-vals "institution")))
 ;; 			   (email (stripfix (:from-post rc 'get-vals "email")))
-;; 			   (therequest (string-append "http://labsolns.com/software/register/insert.php?fname=" fname "&lname=" lname "&institution=" inst "&email=" email))
+;; 			   (therequest (string-append "http://labsolns.com/limsn/register/insert.php?fname=" fname "&lname=" lname "&institution=" inst "&email=" email))
 ;; 			   ;; (validkey? (validate-key cust-id email cust-key))
 ;; 			   (bv (string->utf8 "test"))
-;; 			   (port (open-socket-for-uri "http://labsolns.com/software/register"))
+;; 			   (port (open-socket-for-uri "http://labsolns.com/limsn/register"))
 ;; 			   (dummy (fcntl port F_SETFL (logior O_NONBLOCK (fcntl port F_GETFL 0))))
 ;; 			   (header (http-get therequest
 ;; 					     #:body bv

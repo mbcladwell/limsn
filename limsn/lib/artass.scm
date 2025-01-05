@@ -5,6 +5,7 @@
   #:use-module (artanis irregex)
   #:use-module (artanis env) ;;provides current-toplevel
   #:use-module (ice-9 local-eval)
+ #:use-module  (artanis security nss)
   #:use-module (srfi srfi-1)
   #:use-module (dbi dbi)
   #:use-module (ice-9 textual-ports)

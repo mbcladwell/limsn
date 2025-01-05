@@ -9,7 +9,7 @@ create table config
 	cust_key varchar(250),
 	cust_email VARCHAR(250));
 
-INSERT INTO config(help_url_prefix, version) VALUES ('labsolns.com/software/', '0.2.0');
+INSERT INTO config(help_url_prefix, version) VALUES ('labsolns.com/limsn/', '0.2.0');
 
 -- added for artanis
 DROP TABLE IF EXISTS person CASCADE;

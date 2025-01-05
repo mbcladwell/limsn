@@ -60,9 +60,12 @@
 			 #:cookies '(names prjid sid)
 			 #:with-auth "login" )
 			 (lambda (rc ) 
-			   (let* ( 
+			   (let* (
+				  (dummy (DEBUG  "################The value of sid (in getall) is: ~a~%"  (:cookies-value rc "sid")))
+			 	   (dummy (DEBUG  "###################################################################The value of name (in login) is: ~a~%" (the-environment)))
+
 				  (help-topic "project")
-				   (sess-check (:session rc 'check))
+				  (sess-check (:session rc 'check))
 				  (sid (:cookies-value rc "sid"))
 				  (prjid (get-prjid rc sid))
 				  (holder   (DB-get-all-rows (:conn rc "select id, project_sys_name, project_name, descr from project" )))  

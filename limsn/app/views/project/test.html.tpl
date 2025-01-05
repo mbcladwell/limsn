@@ -7,10 +7,10 @@
   <h1>Test</h1><br><br>
 
 
-<%= ret %><br><br>
+<%= result %><br><br>
 
-<%= help-url-prefix %><br><br>
-<%= register-url %><br><br>
+<%= username %><br><br>
+<%= userid %><br><br>
 
 
   

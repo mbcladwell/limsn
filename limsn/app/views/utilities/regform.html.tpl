@@ -6,7 +6,7 @@
 <div class="container">
     <h1>Register</h1>
 
-    Obtain a registration key so you can modify the <a href="http://labsolns.com/software/configuration/">configuration</a> parameter ‘cookie.maxplates’.
+    Obtain a registration key so you can modify the <a href="http://labsolns.com/limsn/configuration/">configuration</a> parameter ‘cookie.maxplates’.
 
     <br><br>
 <form action="/regformaction" method="post">
