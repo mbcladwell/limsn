@@ -13,7 +13,7 @@
 ;; (add-to-load-path "/home/mbc/syncd/tobedeleted/limsn")
 ;; (add-to-load-path "/home/admin/limsn")
  (add-to-load-path "pathintostore/limsn")
-;; (add-to-load-path "pathintostore")
+ (add-to-load-path "/home/adminpathintostore/limsn")
  
 
 ;;(conf-set! 'maxplates 100)
