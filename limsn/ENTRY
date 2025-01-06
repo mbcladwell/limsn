@@ -7,13 +7,8 @@
 )
  ;; Put whatever you want to be called before server initilization here
  
- (add-to-load-path "/home/mbc/projects/limsn")
-;; (add-to-load-path "/gnu/store/rfgcri126zxyd3kdxp23751pw18lrca4-artanis-1.0.0/share/guile/site/3.0")
-;;(add-to-load-path "/home/mbc/projects/artanis")
-;; (add-to-load-path "/home/mbc/syncd/tobedeleted/limsn")
-;; (add-to-load-path "/home/admin/limsn")
- (add-to-load-path "pathintostore/limsn")
- (add-to-load-path "/home/adminpathintostore/limsn")
+;; (add-to-load-path "/home/mbc/projects/limsn")
+ (add-to-load-path "/home/adminpathintostore/share/guile/site/3.0")
  
 
 ;;(conf-set! 'maxplates 100)
