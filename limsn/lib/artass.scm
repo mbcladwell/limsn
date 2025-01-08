@@ -19,6 +19,7 @@
 	    nopwd-conn
 	    ln-version
 	    maxplates
+	    appname
 	    process-pg-row-element
 	    process-list-of-rows
 	    get-c1
@@ -69,6 +70,7 @@
 (define ln-version "0.1.0-061621")
 ;;(define maxplates (get-conf  'maxplates)) ;;when using ENTRY
 (define maxplates (get-conf '(cookie maxplates))) ;;when using artanis.conf
+(define appname (get-conf '(cookie appname))) ;;when using artanis.conf
 
 
 ;; (if (access? properties-filename R_OK)
