@@ -7,13 +7,13 @@
 )
  ;; Put whatever you want to be called before server initilization here
  
- (add-to-load-path "/home/mbc/projects/limsn")
+;; (add-to-load-path "/home/mbc/projects/limsn")
  (add-to-load-path "/home/adminpathintostore/share/guile/site/3.0/limsn")
 ;; (add-to-load-path "/home/adminpathintostore/share/guile/site/3.0/limsn/limsn")
  
 
-(conf-set! 'maxplates 1000)
-(conf-set! 'appname "limsn") ;; to configure /tmp/limsn
+;;(conf-set! 'maxplates 1000)
+;;(conf-set! 'appname "limsn") ;; to configure /tmp/limsn
 
 
 ;; (init-server)
