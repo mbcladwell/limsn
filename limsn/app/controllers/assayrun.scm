@@ -157,7 +157,7 @@
 			  (arid   (get-from-qstr rc "arid"))
 			  (sid (:cookies-value rc "sid"))
 			  (prjid (get-prjid rc sid))
-			  (outfile (string-append "../../../../../../../../../" (current-toplevel) (get-rand-file-name "script" "txt")))			  
+			  (outfile (string-append (current-tmp) "/" (get-rand-file-name "script" "txt")))			  
 			  (response "1")
 			  (metric "3")			  
 			  (threshold (cdaar (DB-get-all-rows (:conn rc  (get-threshold-value-sql response metric arid )))))
