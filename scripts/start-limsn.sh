@@ -1,5 +1,5 @@
 #!/bin/bash
-PATH_INTO_STORE=$HOMEpathintostore
+PATH_INTO_STORE=pathintostore
 export LC_ALL="C"
 ##mkdir -p /var/tmp/limsn/tmp/cache
 mkdir -p /tmp/limsn/tmp/cache/

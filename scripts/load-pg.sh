@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PATH_INTO_STORE=$HOMEpathintostore/share/guile/site/3.0/limsn/postgres
+PATH_INTO_STORE=pathintostore/share/guile/site/3.0/limsn/postgres
    
  psql -U $1 -h 127.0.0.1 postgres -a -f $PATH_INTO_STORE/initdba.sql
  psql -U ln_admin -h 127.0.0.1 postgres -a -f $PATH_INTO_STORE/initdbb.sql
